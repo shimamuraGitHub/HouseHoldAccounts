@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">HouseHoldAccounts</string>
+    <string name="title_activity_config">ConfigActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <!--
+    <string-array name="inputType">
+        <item>収入</item>
+        <item>外食費</item>
+        <item>娯楽費</item>
+    </string-array>
+-->
+</resources>
