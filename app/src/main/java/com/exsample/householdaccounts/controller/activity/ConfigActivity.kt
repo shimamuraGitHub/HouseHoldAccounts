@@ -1,4 +1,4 @@
-package com.exsample.householdaccounts.config
+package com.exsample.householdaccounts.controller.activity
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar

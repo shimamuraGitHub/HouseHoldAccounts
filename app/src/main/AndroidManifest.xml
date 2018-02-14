@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.exsample.householdaccounts.controller.activity.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,8 +17,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".config.ConfigActivity"
+            android:name="com.exsample.householdaccounts.controller.activity.ConfigActivity"
             android:label="@string/title_activity_config"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.exsample.householdaccounts.controller.activity.list.ListActivity"
+            android:label="@string/title_activity_list"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
