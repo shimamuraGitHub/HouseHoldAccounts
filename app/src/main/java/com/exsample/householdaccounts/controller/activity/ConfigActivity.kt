@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -61,6 +62,7 @@ class ConfigActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         when (item.itemId) {
             R.id.nav_main -> {
                 // Handle the camera action
+                AlertDialog.Builder(this).setTitle("test").show()
             }
             R.id.nav_config -> {
 

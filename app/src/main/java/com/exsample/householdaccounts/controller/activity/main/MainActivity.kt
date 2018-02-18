@@ -2,21 +2,30 @@ package com.exsample.householdaccounts.controller.activity.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
+import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import com.exsample.householdaccounts.R
+import com.exsample.householdaccounts.controller.activity.find
 import com.exsample.householdaccounts.controller.activity.list.ListActivity
-import com.exsample.householdaccounts.controller.widgets.ButtonView
-import com.exsample.householdaccounts.controller.widgets.AlertDialog
-import com.exsample.householdaccounts.controller.widgets.EditTextView
-import com.exsample.householdaccounts.controller.widgets.SpinnerView
+import com.exsample.householdaccounts.controller.widgets.*
 import com.exsample.householdaccounts.db.DBOpenHelper
+import kotlinx.android.synthetic.main.activity_config.*
+import kotlinx.android.synthetic.main.app_bar_config.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelectedListener {
 
     val dbHelper = DBOpenHelper(context = this,version = 1)
     lateinit var service: MainService
+
+    lateinit var typeSpinner:Spinner
+    lateinit var moneyEdit: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -26,8 +35,20 @@ class MainActivity : AppCompatActivity() {
         dbHelper.onCreate(dbHelper.writableDatabase)
         service = MainService(dbHelper)
 
-        val spinner = SpinnerView(findViewById<Spinner>(R.id.itemNames))
-        spinner.buildRecordTypeAdapter(service.findRecordTypes())
+        typeSpinner = find<Spinner>(R.id.itemNames)
+        typeSpinner.buildRecordTypeAdapter(service.findRecordTypes())
+
+        moneyEdit = find<EditText>(R.id.moneyAmount)
+        setNav()
+    }
+
+    private fun setNav(){
+        val toggle = ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        nav_view.setNavigationItemSelectedListener(this)
     }
 
     /**
@@ -36,20 +57,17 @@ class MainActivity : AppCompatActivity() {
      */
     fun register(v: View){
 
-        val moneyEditText = EditTextView(findViewById<EditText>(R.id.moneyAmount))
-        val recordTypeSpinner = SpinnerView(findViewById<Spinner>(R.id.itemNames))
-
-        val message = service.registerRecord(moneyEditText,recordTypeSpinner)
+        val message = service.registerRecord(moneyEdit,typeSpinner)
 
         if(message.success){
-            moneyEditText.clear()
+            moneyEdit.clear()
             Toast.makeText(this, message.message, Toast.LENGTH_LONG).show()
             return
         }
 
-        val alertDialog = AlertDialog(this)
-        alertDialog.build(message)
-        alertDialog.builder.show()
+        val alertDialog = DialogBuilder(this)
+        alertDialog.buildMessage(message)
+        alertDialog.show()
     }
 
     /**
@@ -59,15 +77,14 @@ class MainActivity : AppCompatActivity() {
      */
     fun input(v: View) {
 
-        val numberButton = ButtonView(v as Button);
-        val moneyEditText = EditTextView(findViewById<EditText>(R.id.moneyAmount))
+        val numberButton = v as Button
 
         // テキストの1文字目に0が入る事を阻止する
-        if (numberButton.isZero() && moneyEditText.isBlank()) {
+        if (numberButton.isZero() && moneyEdit.isBlank()) {
             return
         }
 
-        moneyEditText.append(numberButton.text())
+        moneyEdit.append(numberButton.text)
     }
 
     /**
@@ -76,22 +93,72 @@ class MainActivity : AppCompatActivity() {
      */
     fun pop(v: View) {
 
-        val moneyAmount = EditTextView(findViewById<EditText>(R.id.moneyAmount))
-
-        if(moneyAmount.isBlank()) {
+        if(moneyEdit.isBlank()) {
             return
         }
-
-        moneyAmount.pop()
+        moneyEdit.pop()
     }
 
     /**
      * クリアボタン押下処理.
      */
-    fun clear(v:View) = EditTextView(findViewById<EditText>(R.id.moneyAmount)).clear()
+    fun clear(v:View) = moneyEdit.clear()
 
     fun toList(v:View?){
         val intent = Intent(this, ListActivity::class.java)
         startActivityForResult(intent,1)
+    }
+
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.config, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        when (item.itemId) {
+            R.id.action_settings -> return true
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Handle navigation view item clicks here.
+        when (item.itemId) {
+            R.id.nav_main -> {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivityForResult(intent,1)
+            }
+            R.id.nav_config -> {
+                val intent = Intent(this, ListActivity::class.java)
+                startActivityForResult(intent,1)
+            }
+            R.id.nav_slideshow -> {
+
+            }
+            R.id.nav_manage -> {
+
+            }
+            R.id.nav_share -> {
+
+            }
+            R.id.nav_send -> {
+
+            }
+        }
+
+        drawer_layout.closeDrawer(GravityCompat.START)
+        return true
     }
 }

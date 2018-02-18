@@ -1,23 +1,18 @@
 package com.exsample.householdaccounts.controller.activity.list
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.TableLayout
+import android.widget.*
 import com.exsample.householdaccounts.R
-import com.exsample.householdaccounts.controller.factory.RecordFactory
-import com.exsample.householdaccounts.controller.widgets.EditTextView
-import com.exsample.householdaccounts.controller.widgets.SpinnerView
+import com.exsample.householdaccounts.controller.activity.find
+import com.exsample.householdaccounts.controller.widgets.buildRecordTypeAdapter
+import com.exsample.householdaccounts.controller.widgets.buildSearchDateAdapter
 import com.exsample.householdaccounts.controller.widgets.list.HouseHoldLayout
 import com.exsample.householdaccounts.db.DBOpenHelper
 import com.exsample.householdaccounts.domain.RecordTypeList
-import com.exsample.householdaccounts.util.createFirstDate
-import com.exsample.householdaccounts.util.createLastDate
 
 import kotlinx.android.synthetic.main.activity_list.*
 import java.util.*
@@ -26,53 +21,76 @@ class ListActivity : AppCompatActivity() {
 
     val dbHelper = DBOpenHelper(context = this,version = 1)
 
-    val recordFactory = RecordFactory()
-
     lateinit var service : ListService
+
+    lateinit var houseHoldLayout:HouseHoldLayout
+    lateinit var typeSpinner :Spinner
+    lateinit var fromDateSpinner :Spinner
+    lateinit var toDateSpinner :Spinner
+    lateinit var fromMoneyEdit :EditText
+    lateinit var toMoneyEdit :EditText
+
+    lateinit var recordTypeList:RecordTypeList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener {
-
-            AlertDialog.Builder(this).setView(R.layout.search_record_list).show()
-
-            val typeSpinner = SpinnerView(findViewById<Spinner>(R.id.typeSpinner))
-
-            val recordTypes = RecordTypeList(service.findAllRecordTypes())
-            typeSpinner.buildRecordTypeAdapter(recordTypes.list)
-
-            val search = findViewById<Button>(R.id.search)
-            search.setOnClickListener {
-
-                val type = recordTypes.findByNameSpinner(typeSpinner)
-
-                fun create(id1: Int, body: (String) -> Date, id2: Int) = recordFactory.create(
-                        SpinnerView(findViewById<Spinner>(id1)),
-                        body,
-                        type,
-                        EditTextView(findViewById<EditText>(id2))
-                )
-
-                val recordA = create(R.id.dateSpinner1, ::createFirstDate, R.id.moneyEdit1)
-                val recordB = create(R.id.dateSpinner2, ::createLastDate, R.id.moneyEdit2)
-
-            }
-        }
-
         service = ListService(dbHelper)
 
-        buildList(HouseHoldLayout(findViewById<TableLayout>(R.id.accountTable)))
+        recordTypeList = service.findAllRecordTypes()
+
+        houseHoldLayout = HouseHoldLayout(find<TableLayout>(R.id.accountTable))
+        houseHoldLayout.build(service.findAllRecord(),recordTypeList)
+
+        fab.setOnClickListener {
+
+            val layout = getInflate()
+            AlertDialog.Builder(this).setView(layout).show()
+            findLayoutViews(layout)
+
+            val thisMonth = Calendar.getInstance().get(Calendar.MONTH)
+            setSpinner(24 + thisMonth)
+            setSpinner(25 + thisMonth)
+
+            val typeList = service.findAllRecordTypes()
+            typeSpinner.buildRecordTypeAdapter(typeList)
+
+            val search = layout.find<Button>(R.id.search)
+            search.setOnClickListener {search(typeList)}
+        }
     }
 
-    private fun buildList(tableLayout: HouseHoldLayout)
-            = tableLayout.build(this,service.findAllRecord(),RecordTypeList(service.findAllRecordTypes()))
+    private fun getInflate() = LayoutInflater.from(this).inflate(R.layout.search_record_list,null)
+
+    private fun findLayoutViews(layout: View){
+        typeSpinner = layout.find<Spinner>(R.id.typeSpinner)
+        fromDateSpinner = layout.find<Spinner>(R.id.dateSpinner1)
+        toDateSpinner = layout.find<Spinner>(R.id.dateSpinner2)
+        fromMoneyEdit = layout.find<EditText>(R.id.moneyEdit1)
+        toMoneyEdit = layout.find<EditText>(R.id.moneyEdit2)
+    }
+
+    private fun setSpinner(selection : Int){
+        toDateSpinner.buildSearchDateAdapter()
+        toDateSpinner.setSelection(selection)
+    }
+
+    private fun search(typeList:RecordTypeList){
+
+        val type = typeList.findByNameSpinner(typeSpinner)
+
+        val fromRecord = service.createFromRecord(fromDateSpinner,type,fromMoneyEdit)
+        val toRecord = service.createToRecord(toDateSpinner,type, toMoneyEdit)
+
+        val result = service.search(fromRecord,toRecord)
+        houseHoldLayout.removeAllViews()
+        houseHoldLayout.build(result,recordTypeList)
+    }
 
     fun reBuildList(){
-        val tableLayout = HouseHoldLayout(findViewById<TableLayout>(R.id.accountTable))
-        tableLayout.removeAllViews()
-        buildList(tableLayout)
+        houseHoldLayout.removeAllViews()
+        houseHoldLayout.build(service.findAllRecord(),recordTypeList)
     }
 }

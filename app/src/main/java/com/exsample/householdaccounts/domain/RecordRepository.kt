@@ -1,5 +1,6 @@
 package com.exsample.householdaccounts.domain
 
+import android.database.Cursor
 import com.exsample.householdaccounts.db.DBOpenHelper
 import com.exsample.householdaccounts.mapper.RecordMapper
 import com.exsample.householdaccounts.mapper.RecordTypeMapper
@@ -24,8 +25,12 @@ class RecordRepository(helper: DBOpenHelper) {
 
     fun insert(record: Record) = mapper.insert(record)
 
-    fun findAll() : List<Record>{
+    fun findAll() :RecordList{
         val cursor = mapper.findAll()
+        return buildRecordList(cursor)
+    }
+
+    private fun buildRecordList(cursor: Cursor) : RecordList {
         val list = mutableListOf<Record>()
         while(cursor.moveToNext()){
             list.add(
@@ -35,10 +40,10 @@ class RecordRepository(helper: DBOpenHelper) {
                             cursor.getInt(COLUMNSINDEX_RECORD_MONEY))
             )
         }
-        return list
+        return RecordList(list)
     }
 
-    fun findAllTypes() : List<RecordType>{
+    fun findAllTypes() : RecordTypeList {
 
         val cursor = typeMapper.findAll()
 
@@ -48,10 +53,13 @@ class RecordRepository(helper: DBOpenHelper) {
             list.add(RecordType(cursor.getString(COLUMNSINDEX_RECORD_TYPE_CODE),
                                   cursor.getString(COLUMNSINDEX_RECORD_TYPE_NAME)))
         }
-        return list
+        return RecordTypeList(list)
     }
 
     fun delete(record: Record) = mapper.delete(record)
 
-    fun search(recordA: Record,recordB: Record) = listOf<Record>()
+    fun search(fromRecord: Record, toRecord: Record): RecordList {
+        val cursor = mapper.search(fromRecord,toRecord)
+        return buildRecordList(cursor)
+    }
 }
