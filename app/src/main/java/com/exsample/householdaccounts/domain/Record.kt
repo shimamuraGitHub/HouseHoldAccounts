@@ -6,7 +6,7 @@ import java.util.*
 /**
  * Created by ryosuke on 2018/01/21.
  */
-class Record (
+data class Record (
         val id : String? = null,
         val date : Date? = null,
         val type: String? = null,

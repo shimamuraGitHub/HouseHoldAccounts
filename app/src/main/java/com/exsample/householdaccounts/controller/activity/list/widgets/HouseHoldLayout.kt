@@ -68,13 +68,12 @@ class HouseHoldLayout(val tableLayout: TableLayout){
 
     private fun buildDialog(record: Record): DialogBuilder {
 
-        val builder = DialogBuilder(tableLayout.context)
 
         val title = "${record.getAdjustedDate()} ${record.getTypeName()} ${record.money}円"
         val items = arrayOf("編集", "削除")
 
-        builder.buildItems(ItemsMessage(title,items), { _, s -> buildConfirmDialog(s,record).show() })
-        return builder
+        val builder = DialogBuilder(tableLayout.context)
+        return builder.buildItems(ItemsMessage(title,items), { _, s -> buildConfirmDialog(s,record).show() })
     }
 
     private fun buildConfirmDialog(selected:Int,record: Record): DialogBuilder {

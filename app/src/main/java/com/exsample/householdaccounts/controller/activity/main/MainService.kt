@@ -1,16 +1,18 @@
 package com.exsample.householdaccounts.controller.activity.main
 
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import com.exsample.householdaccounts.controller.factory.RecordFactory
 import com.exsample.householdaccounts.controller.message.ResultMessage
-import com.exsample.householdaccounts.controller.message.Message
+import com.exsample.householdaccounts.controller.widgets.isBlank
 import com.exsample.householdaccounts.controller.widgets.isNullOrBlank
+import com.exsample.householdaccounts.controller.widgets.isZero
+import com.exsample.householdaccounts.controller.widgets.pop
 import com.exsample.householdaccounts.db.DBOpenHelper
 import com.exsample.householdaccounts.domain.Record
 import com.exsample.householdaccounts.domain.RecordAgent
 import com.exsample.householdaccounts.domain.RecordType
-import com.exsample.householdaccounts.domain.RecordTypeList
 
 /**
  * Created by ryosuke on 2018/02/10.
@@ -27,7 +29,7 @@ class MainService(helper: DBOpenHelper){
             return ResultMessage(false,"ERROR","金額が入力されていません")
         }
 
-        val typeList = recordAgent.findAllTypes()
+        val typeList = recordAgent.findAllEnabledTypes()
         val selectedType = typeList.findByNameSpinner(typeSpinner)
 
         val record = recordFactory.create(moneyEdit,selectedType)
@@ -43,5 +45,21 @@ class MainService(helper: DBOpenHelper){
                 ${type.name}：${record.money} 円
             """.trimIndent()
 
-    fun findRecordTypes() = recordAgent.findAllTypes()
+    fun findRecordTypes() = recordAgent.findAllEnabledTypes()
+
+    fun popMoneyEdit(moneyEdit:EditText){
+
+        if(moneyEdit.isBlank()) {
+            return
+        }
+        moneyEdit.pop()
+    }
+
+    fun inputNumber(numberButton:Button,moneyEdit: EditText){
+        // テキストの1文字目に0が入る事を阻止する
+        if (numberButton.isZero() && moneyEdit.isBlank()) {
+            return
+        }
+        moneyEdit.append(numberButton.text)
+    }
 }

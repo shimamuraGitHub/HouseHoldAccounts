@@ -6,7 +6,9 @@ import java.util.*
 /**
  * Created by ryosuke on 2018/02/11.
  */
-fun parseHyphen(yyyy_MM_dd:String) = SimpleDateFormat("yyyy-MM-dd").parse(yyyy_MM_dd)
+val DATE_HAPHEN = "yyyy-MM-dd"
+
+fun parseHyphen(yyyy_MM_dd:String) = SimpleDateFormat(DATE_HAPHEN).parse(yyyy_MM_dd)
 
 fun createFirstDate(yyyy_MM: String) = parseHyphen("${yyyy_MM}-01")
 
@@ -20,3 +22,4 @@ fun createLastDate(yyyy_MM: String) :Date{
     }
     return parseHyphen("${yyyy_MM}-${lastDay}")
 }
+

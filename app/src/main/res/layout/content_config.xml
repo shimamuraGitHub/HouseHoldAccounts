@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".controller.activity.ConfigActivity"
+    tools:context=".controller.activity.config.ConfigActivity"
     tools:showIn="@layout/app_bar_config">
 
     <LinearLayout
@@ -13,74 +13,75 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_marginTop="150dp"
+            android:layout_gravity="center"
+            android:layout_width="300dp"
+            android:layout_height="50dp" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="70dp"
-            android:orientation="horizontal">
-
-            <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="200dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/add"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_weight="1"
-                android:text="追加" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="50dp"
             android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="項目名"
+                android:textSize="30sp" />
+
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="false"
+                android:switchMinWidth="50dp"
+                android:text="収入"
+                android:textSize="30sp" />
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30sp"
                 android:layout_weight="1"
-                android:text="項目名" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:textSize="30sp"
-                android:layout_weight="1"
-                android:text="収支" />
+                android:text="支出" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
             tools:layout_editor_absoluteX="39dp">
 
             <Button
-                android:id="@+id/edit"
+                android:id="@+id/update"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
                 android:layout_weight="1"
-                android:text="変更" />
+                android:onClick="update"
+                android:text="更新" />
 
             <Button
-                android:id="@+id/delete"
+                android:id="@+id/erase"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginHorizontal="40dp"
+                android:layout_weight="1"
+                android:onClick="erase"
                 android:text="削除" />
+
         </LinearLayout>
     </LinearLayout>
 

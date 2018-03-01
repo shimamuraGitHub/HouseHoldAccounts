@@ -20,7 +20,7 @@ class ListService(helper: DBOpenHelper) {
 
     fun findAllRecord() = recordAgent.findAll()
 
-    fun findAllRecordTypes() = recordAgent.findAllTypes()
+    fun findAllRecordTypes() = recordAgent.findAllEnabledTypes()
 
     fun erase(record: Record) = recordAgent.erase(record)
 

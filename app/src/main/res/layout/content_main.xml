@@ -19,12 +19,11 @@
             android:layout_height="match_parent">
 
             <Spinner
-                android:id="@+id/itemNames"
+                android:id="@+id/typeNames"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingVertical="20dp"
                 android:layout_span="3"/>
-            <!--                android:entries="@array/inputType" /> -->
         </TableRow>
 
         <TableRow
@@ -39,7 +38,7 @@
                 android:textSize="30sp" />
 
             <EditText
-                android:id="@+id/moneyAmount"
+                android:id="@+id/moneyEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_span="2"
@@ -131,21 +130,21 @@
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/button13"
+                android:id="@+id/pop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="pop"
                 android:text="◀×" />
 
             <Button
-                android:id="@+id/button10"
+                android:id="@+id/button0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="input"
                 android:text="0" />
 
             <Button
-                android:id="@+id/button12"
+                android:id="@+id/clear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="clear"
@@ -157,7 +156,7 @@
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/button11"
+                android:id="@+id/register"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="50dp"
@@ -171,7 +170,7 @@
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/button14"
+                android:id="@+id/toList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="50dp"

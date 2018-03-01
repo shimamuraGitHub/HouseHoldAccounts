@@ -2,14 +2,14 @@ package com.exsample.householdaccounts.controller.activity.list
 
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.exsample.householdaccounts.R
 import com.exsample.householdaccounts.controller.activity.find
-import com.exsample.householdaccounts.controller.widgets.buildRecordTypeAdapter
-import com.exsample.householdaccounts.controller.widgets.buildSearchDateAdapter
+import com.exsample.householdaccounts.controller.activity.navigation.NavigationListener
+import com.exsample.householdaccounts.controller.widgets.setRecordTypeAdapter
+import com.exsample.householdaccounts.controller.widgets.setSearchDateAdapter
 import com.exsample.householdaccounts.controller.widgets.list.HouseHoldLayout
 import com.exsample.householdaccounts.db.DBOpenHelper
 import com.exsample.householdaccounts.domain.RecordTypeList
@@ -17,7 +17,7 @@ import com.exsample.householdaccounts.domain.RecordTypeList
 import kotlinx.android.synthetic.main.activity_list.*
 import java.util.*
 
-class ListActivity : AppCompatActivity() {
+class ListActivity : NavigationListener() {
 
     val dbHelper = DBOpenHelper(context = this,version = 1)
 
@@ -35,7 +35,7 @@ class ListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
-        setSupportActionBar(toolbar)
+//        setSupportActionBar(toolbar)
 
         service = ListService(dbHelper)
 
@@ -55,17 +55,18 @@ class ListActivity : AppCompatActivity() {
             setSpinner(25 + thisMonth)
 
             val typeList = service.findAllRecordTypes()
-            typeSpinner.buildRecordTypeAdapter(typeList)
+            typeSpinner.setRecordTypeAdapter(typeList)
 
             val search = layout.find<Button>(R.id.search)
             search.setOnClickListener {search(typeList)}
         }
+        setNavigation()
     }
 
     private fun getInflate() = LayoutInflater.from(this).inflate(R.layout.search_record_list,null)
 
     private fun findLayoutViews(layout: View){
-        typeSpinner = layout.find<Spinner>(R.id.typeSpinner)
+        typeSpinner = layout.find<Spinner>(R.id.spinner)
         fromDateSpinner = layout.find<Spinner>(R.id.dateSpinner1)
         toDateSpinner = layout.find<Spinner>(R.id.dateSpinner2)
         fromMoneyEdit = layout.find<EditText>(R.id.moneyEdit1)
@@ -73,7 +74,7 @@ class ListActivity : AppCompatActivity() {
     }
 
     private fun setSpinner(selection : Int){
-        toDateSpinner.buildSearchDateAdapter()
+        toDateSpinner.setSearchDateAdapter()
         toDateSpinner.setSelection(selection)
     }
 

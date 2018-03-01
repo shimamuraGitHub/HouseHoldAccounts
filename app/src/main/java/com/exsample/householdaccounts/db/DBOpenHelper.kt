@@ -1,5 +1,6 @@
 package com.exsample.householdaccounts.db
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -18,16 +19,19 @@ class DBOpenHelper(
 
         if(db == null) return
 
-        /* テーブル設定を変更したときに */
+        /* (危険！)全てのテーブルをDROPしたいときに */
 //        dropAllTable.forEach { db.execSQL(it) }
+
+        // RECORD_TYPEのカラム構造を変更したときに
+//        db.execSQL("DROP TABLE RECORD_TYPE")
 
         db.execSQL(createRecord)
         db.execSQL(createType)
 
-        if(dbQuery(db=db,tableName="RECORD_TYPE").count != 9){
-            dbDelete(db=db,tableName = "RECORD_TYPE")
-            insertTypes.forEach { db.execSQL(it) }
-        }
+        /* RECORD_TYPEの初期コード値を変更したいときに */
+        dbDelete(db=db,tableName = "RECORD_TYPE")
+        insertTypes.forEach { db.execSQL(it) }
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {}
@@ -51,3 +55,11 @@ fun dbDelete(
         whereClause:String? = null,
         whereArgs:Array<String>? = null
 ) = db.delete(tableName,whereClause,whereArgs)
+
+fun dbUpdate(
+        db:SQLiteDatabase,
+        tableName: String,
+        values: ContentValues,
+        whereClause: String? = null,
+        whereArgs: Array<String>? = null
+) = db.update(tableName,values,whereClause,whereArgs)
