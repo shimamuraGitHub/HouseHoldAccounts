@@ -19,5 +19,4 @@
         app:headerLayout="@layout/nav_header_config"
         app:menu="@menu/activity_config_drawer" />
 
-
 </android.support.v4.widget.DrawerLayout>

@@ -3,7 +3,7 @@ package com.exsample.householdaccounts.controller.activity.main
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import com.exsample.householdaccounts.controller.factory.RecordFactory
+import com.exsample.householdaccounts.factory.RecordFactory
 import com.exsample.householdaccounts.controller.message.ResultMessage
 import com.exsample.householdaccounts.controller.widgets.isBlank
 import com.exsample.householdaccounts.controller.widgets.isNullOrBlank
@@ -23,7 +23,7 @@ class MainService(helper: DBOpenHelper){
 
     val recordFactory = RecordFactory()
 
-    fun registerRecord(moneyEdit: EditText, typeSpinner: Spinner) : ResultMessage {
+    fun registerRecord(moneyEdit: EditText, typeSpinner: Spinner,dateSpinner: Spinner) : ResultMessage {
 
         if(moneyEdit.isNullOrBlank()){
             return ResultMessage(false,"ERROR","金額が入力されていません")
@@ -32,7 +32,7 @@ class MainService(helper: DBOpenHelper){
         val typeList = recordAgent.findAllEnabledTypes()
         val selectedType = typeList.findByNameSpinner(typeSpinner)
 
-        val record = recordFactory.create(moneyEdit,selectedType)
+        val record = recordFactory.create(moneyEdit,selectedType,dateSpinner)
 
         if(recordAgent.register(record) == 1){
             return ResultMessage(true,message=buildRegisterMessage(record,selectedType))
@@ -40,20 +40,12 @@ class MainService(helper: DBOpenHelper){
         return ResultMessage(false,"ERROR","登録に失敗しました。")
     }
 
-    private fun buildRegisterMessage(record: Record, type: RecordType) = """
+    private fun buildRegisterMessage(target: Record, targetType: RecordType) = """
                 家計簿に記入しました。
-                ${type.name}：${record.money} 円
+                ${targetType.name}：${target.money} 円
             """.trimIndent()
 
     fun findRecordTypes() = recordAgent.findAllEnabledTypes()
-
-    fun popMoneyEdit(moneyEdit:EditText){
-
-        if(moneyEdit.isBlank()) {
-            return
-        }
-        moneyEdit.pop()
-    }
 
     fun inputNumber(numberButton:Button,moneyEdit: EditText){
         // テキストの1文字目に0が入る事を阻止する

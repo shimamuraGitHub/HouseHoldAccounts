@@ -17,5 +17,8 @@ fun EditText.clear() = text.clear()
 fun EditText.isBlank() = length() == 0
 
 fun EditText.pop() {
-    this.text = text.replace(length() - 1,length(),"")
+    if(text.isBlank()) {
+        return
+    }
+    text = text.replace(length() - 1,length(),"")
 }

@@ -1,6 +1,7 @@
 package com.exsample.householdaccounts.controller.activity.navigation
 
 import android.content.Intent
+import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -18,6 +19,10 @@ import kotlinx.android.synthetic.main.app_bar_config.*
  * Created by ryosuke on 2018/02/18.
  */
 abstract class NavigationListener :  AppCompatActivity() , NavigationView.OnNavigationItemSelectedListener{
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     protected fun setNavigation(){
         val toggle = ActionBarDrawerToggle(

@@ -1,4 +1,4 @@
-package com.exsample.householdaccounts.controller.factory
+package com.exsample.householdaccounts.factory
 
 import android.widget.EditText
 import android.widget.Switch

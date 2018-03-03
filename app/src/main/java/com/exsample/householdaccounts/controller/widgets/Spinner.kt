@@ -4,8 +4,9 @@ import android.R
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
+import com.exsample.householdaccounts.domain.RecordType
 import com.exsample.householdaccounts.domain.RecordTypeList
-import com.exsample.householdaccounts.util.toEditable
+import com.exsample.householdaccounts.util.*
 import java.util.*
 
 /**
@@ -21,11 +22,10 @@ fun Spinner.adapter(list:List<String>){
 
 fun Spinner.setSearchDateAdapter() {
     val list = mutableListOf<String>()
-    val now = Calendar.getInstance()
-    val thisYear = now.get(Calendar.YEAR)
-    for(i in 2 downTo -2){
+    val thisYear = Calendar.getInstance().getYear()
+    for(i in -2..2){
         for(y in 1..12){
-            list.add("${thisYear - i}-${y}")
+            list.add("${thisYear + i}-${y.toCode(2)}")
         }
     }
     adapter(list)
@@ -34,4 +34,3 @@ fun Spinner.setSearchDateAdapter() {
 fun Spinner.toStringSelectedItem() = this.selectedItem.toString()
 
 fun Spinner.toEditableSelectedItem() = this.toStringSelectedItem().toEditable()
-

@@ -4,39 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import com.exsample.householdaccounts.R
-import com.exsample.householdaccounts.controller.activity.find
 import com.exsample.householdaccounts.controller.activity.list.ListActivity
-import com.exsample.householdaccounts.controller.activity.navigation.NavigationListener
 import com.exsample.householdaccounts.controller.widgets.*
-import com.exsample.householdaccounts.db.DBOpenHelper
+import com.exsample.householdaccounts.domain.Record
 
-class MainActivity : NavigationListener() {
-
-    val dbHelper = DBOpenHelper(context = this,version = 1)
-    lateinit var service: MainService
-
-    lateinit var typeSpinner:Spinner
-    lateinit var moneyEdit: EditText
+class MainActivity : AbstractActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        dbHelper.onCreate(dbHelper.writableDatabase)
-        service = MainService(dbHelper)
-
-        findViews()
-
-        typeSpinner.setRecordTypeAdapter(service.findRecordTypes())
-
         setNavigation()
-    }
-
-    private fun findViews(){
-        typeSpinner = find<Spinner>(R.id.typeNames)
-        moneyEdit = find<EditText>(R.id.moneyEdit)
     }
 
     /**
@@ -45,7 +21,7 @@ class MainActivity : NavigationListener() {
      */
     fun register(v: View){
 
-        val message = service.registerRecord(moneyEdit,typeSpinner)
+        val message = service.registerRecord(moneyEdit,typeSpinner,dateSpinner)
 
         if(message.success){
             moneyEdit.clear()
@@ -54,6 +30,8 @@ class MainActivity : NavigationListener() {
         }
         DialogBuilder(this).buildMessage(message).show()
     }
+
+    override fun update(target: Record) {}
 
     /**
      * 各数字ボタン押下時の処理.
@@ -64,17 +42,13 @@ class MainActivity : NavigationListener() {
 
     /**
      * ◀×ボタン押下処理.
-     *
      */
-    fun pop(v: View)  = service.popMoneyEdit(moneyEdit)
+    fun pop(v: View)  = moneyEdit.pop()
 
     /**
      * クリアボタン押下処理.
      */
     fun clear(v:View) = moneyEdit.clear()
 
-    fun toList(v:View?){
-        val intent = Intent(this, ListActivity::class.java)
-        startActivityForResult(intent,1)
-    }
+    fun toList(v:View?) = startActivityForResult(Intent(this, ListActivity::class.java),1)
 }

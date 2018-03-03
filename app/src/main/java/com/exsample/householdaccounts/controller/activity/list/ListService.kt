@@ -2,18 +2,19 @@ package com.exsample.householdaccounts.controller.activity.list
 
 import android.widget.EditText
 import android.widget.Spinner
-import com.exsample.householdaccounts.controller.factory.RecordFactory
+import com.exsample.householdaccounts.controller.widgets.Year_MonthSpinnerFunctions
+import com.exsample.householdaccounts.controller.widgets.setSearchDateAdapter
+import com.exsample.householdaccounts.factory.RecordFactory
 import com.exsample.householdaccounts.db.DBOpenHelper
 import com.exsample.householdaccounts.domain.Record
 import com.exsample.householdaccounts.domain.RecordAgent
 import com.exsample.householdaccounts.domain.RecordType
-import com.exsample.householdaccounts.util.createFirstDate
-import com.exsample.householdaccounts.util.createLastDate
+import java.util.*
 
 /**
  * Created by ryosuke on 2018/02/11.
  */
-class ListService(helper: DBOpenHelper) {
+class ListService(helper: DBOpenHelper) : Year_MonthSpinnerFunctions {
 
     val recordAgent = RecordAgent(helper)
     val recordFactory = RecordFactory()
@@ -22,13 +23,24 @@ class ListService(helper: DBOpenHelper) {
 
     fun findAllRecordTypes() = recordAgent.findAllEnabledTypes()
 
-    fun erase(record: Record) = recordAgent.erase(record)
+    fun erase(target: Record) = recordAgent.erase(target)
 
-    fun search(fromRecord: Record, toRecord: Record) = recordAgent.search(fromRecord, toRecord)
+    fun search(from: Record, to: Record) = recordAgent.search(from, to)
 
-    fun createFromRecord(fromDateSpinner: Spinner,type: RecordType,fromMoneyEdit: EditText)
-            = recordFactory.create(fromDateSpinner, ::createFirstDate,type,fromMoneyEdit)
+    fun createFromRecord(fromDate: Spinner, type: RecordType, fromMoney: EditText)
+            = recordFactory.create(fromDate.createSelectedDateAtFirst(),type, fromMoney)
 
-    fun createToRecord(toDateSpinner: Spinner,type: RecordType,toMoneyEdit: EditText)
-            = recordFactory.create(toDateSpinner, ::createLastDate,type,toMoneyEdit)
+    fun createToRecord(toDate: Spinner, type: RecordType, toMoney: EditText)
+            = recordFactory.create(toDate.createSelectedDateAtLast(),type, toMoney)
+
+    fun setSpinners(fromDateSpinner:Spinner,toDateSpinner:Spinner){
+        val thisMonth = Calendar.getInstance().get(Calendar.MONTH)
+        setSpinner(fromDateSpinner,24 + thisMonth)
+        setSpinner(toDateSpinner,25 + thisMonth)
+    }
+
+    private fun setSpinner(dateSpinner: Spinner,selection : Int){
+        dateSpinner.setSearchDateAdapter()
+        dateSpinner.setSelection(selection)
+    }
 }

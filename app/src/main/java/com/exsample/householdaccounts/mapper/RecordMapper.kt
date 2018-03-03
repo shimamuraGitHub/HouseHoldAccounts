@@ -1,16 +1,15 @@
 package com.exsample.householdaccounts.mapper
 
 import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import com.exsample.householdaccounts.db.DBOpenHelper
-import com.exsample.householdaccounts.db.dbQuery
+import com.exsample.householdaccounts.db.SQLiteExtendFuns
 import com.exsample.householdaccounts.domain.Record
 import java.sql.Date
 
 /**
  * Created by ryosuke on 2018/02/05.
  */
-class RecordMapper (val helper: DBOpenHelper){
+class RecordMapper (val helper: DBOpenHelper) : SQLiteExtendFuns {
 
     val db = helper.readableDatabase
 
@@ -29,7 +28,7 @@ class RecordMapper (val helper: DBOpenHelper){
         return 1
     }
 
-    fun findAll() = dbQuery(db = db,tableName = "RECORD")
+    fun findAll() = query(db = db,tableName = "RECORD")
 
     fun delete(record: Record) = db.delete("RECORD","ID = ?", arrayOf(record.id))
 

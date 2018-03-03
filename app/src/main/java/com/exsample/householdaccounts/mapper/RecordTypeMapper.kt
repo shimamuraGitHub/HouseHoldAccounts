@@ -2,18 +2,16 @@ package com.exsample.householdaccounts.mapper
 
 import android.content.ContentValues
 import com.exsample.householdaccounts.db.DBOpenHelper
-import com.exsample.householdaccounts.db.dbQuery
-import com.exsample.householdaccounts.db.dbUpdate
+import com.exsample.householdaccounts.db.SQLiteExtendFuns
 import com.exsample.householdaccounts.domain.RecordType
 import com.exsample.householdaccounts.util.toInt
-import com.exsample.householdaccounts.util.toTimestampString
-import java.sql.Timestamp
+import com.exsample.householdaccounts.util.toTimestamp
 import java.util.*
 
 /**
  * Created by ryosuke on 2018/02/08.
  */
-class RecordTypeMapper(val helper: DBOpenHelper) {
+class RecordTypeMapper(val helper: DBOpenHelper): SQLiteExtendFuns {
 
     val db = helper.readableDatabase
 
@@ -25,39 +23,44 @@ class RecordTypeMapper(val helper: DBOpenHelper) {
     val AT_STARTED = "AT_STARTED"
     val AT_ENDED = "AT_ENDED"
 
-    fun findAllEnabled() = dbQuery(db=db, tableName = TABLE_NAME, selection = "ENABLED = 1")
+    fun findAllEnabled() = query(db=db, tableName = TABLE_NAME, selection = "ENABLED = 1")
 
-    fun update(recordType: RecordType):Int{
+    fun update(type: RecordType):Int{
+
         val values = ContentValues()
-        values.put(CODE,recordType.code)
-        values.put(NAME,recordType.name)
-        values.put(IS_EXPENDITURE,recordType.isExpenditure!!.toInt())
+        values.put(CODE, type.code)
+        values.put(NAME, type.name)
+        values.put(IS_EXPENDITURE, type.isExpenditure!!.toInt())
 
         val clause = "CODE = ? AND ENABLED = ?"
 
-        val args = arrayOf(recordType.code!!,recordType.enabled!!.toInt().toString())
+        val args = arrayOf(type.code!!, type.enabled!!.toInt().toString())
 
-        return dbUpdate(db,TABLE_NAME,values,clause,args)
+        return update(db,TABLE_NAME,values,clause,args)
     }
 
-    fun toDisable(recordType: RecordType):Int{
+    fun toDisable(type: RecordType):Int{
+
         val values = ContentValues()
         values.put(ENABLED, 0)
-        values.put(AT_ENDED,Date().toTimestampString())
+        values.put(AT_ENDED,Date().toTimestamp().toString())
+
         val clause = "CODE = ? AND ENABLED = 1"
 
-        val args = arrayOf(recordType.code!!)
+        val args = arrayOf(type.code!!)
 
-        return dbUpdate(db,TABLE_NAME,values,clause,args)
+        return update(db,TABLE_NAME,values,clause,args)
     }
 
-    fun insert(recordType: RecordType):Int{
+    fun insert(type: RecordType):Int{
+
         val values = ContentValues()
-        values.put(CODE,recordType.code)
-        values.put(NAME,recordType.name)
-        values.put(IS_EXPENDITURE,recordType.isExpenditure!!.toInt())
-        values.put(ENABLED,recordType.enabled!!.toInt())
-        values.put(AT_STARTED, Timestamp(recordType.atStarted!!.time).toString())
+        values.put(CODE, type.code)
+        values.put(NAME, type.name)
+        values.put(IS_EXPENDITURE, type.isExpenditure!!.toInt())
+        values.put(ENABLED, type.enabled!!.toInt())
+        values.put(AT_STARTED, type.atStarted!!.toTimestamp().toString())
+
         return db.insert(TABLE_NAME,"AT_ENDED",values).toInt()
     }
 }

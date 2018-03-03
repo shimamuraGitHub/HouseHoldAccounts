@@ -2,7 +2,7 @@ package com.exsample.householdaccounts.controller.activity.config
 
 import android.widget.EditText
 import android.widget.Switch
-import com.exsample.householdaccounts.controller.factory.RecordTypeFactoy
+import com.exsample.householdaccounts.factory.RecordTypeFactoy
 import com.exsample.householdaccounts.controller.message.ResultMessage
 import com.exsample.householdaccounts.controller.widgets.text
 import com.exsample.householdaccounts.db.DBOpenHelper

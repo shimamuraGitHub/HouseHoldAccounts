@@ -78,11 +78,11 @@ class HouseHoldLayout(val tableLayout: TableLayout){
 
     private fun buildConfirmDialog(selected:Int,record: Record): DialogBuilder {
 
-        val context = tableLayout.context
-        val builder = DialogBuilder(context)
+        val activity = tableLayout.context as ListActivity
+        val builder = DialogBuilder(activity)
         builder.buildConfirm(ConfirmMessage("よろしいですか？"),{ _, _->
-            val activity = context as ListActivity
             when (selected) {
+                0 -> activity.toMainForEdit(record)
                 1 -> activity.service.erase(record)
             }
             activity.reBuildList()

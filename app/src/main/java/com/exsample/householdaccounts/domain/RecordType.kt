@@ -1,5 +1,6 @@
 package com.exsample.householdaccounts.domain
 
+import java.io.Serializable
 import java.util.*
 
 /**
@@ -12,7 +13,9 @@ data class RecordType(
         val enabled : Boolean? = null,
         val atStarted:Date? = null,
         val atEnded:Date? = null
-){
+):Serializable{
+    private val serialVersionUID = 3820984323240L
+
     fun equalsNameWithDifferCode(type:RecordType) = (!(equalsCode(type)) && equalsName(type))
 
     fun equalsName(type:RecordType) = this.name!!.equals(type.name)

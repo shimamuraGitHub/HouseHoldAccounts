@@ -4,8 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import com.exsample.householdaccounts.db.DBOpenHelper
 import com.exsample.householdaccounts.mapper.RecordMapper
-import com.exsample.householdaccounts.mapper.RecordTypeMapper
-import com.exsample.householdaccounts.util.parseHyphen
+import com.exsample.householdaccounts.util.toDate
 
 /**
  * Created by ryosuke on 2018/02/10.
@@ -22,19 +21,16 @@ class RecordRepository(helper: DBOpenHelper) {
 
     private fun buildRecordList(cursor: Cursor) : RecordList {
 
-        val INDEX_ID = 0
-        val INDEX_DATE = 1
-        val INDEX_TYPECODE = 2
-        val INDEX_MONEY = 3
-
         val list = mutableListOf<Record>()
 
         while(cursor.moveToNext()){
             list.add(
-                    Record(cursor.getString(INDEX_ID),
-                            parseHyphen(cursor.getString(INDEX_DATE)),
-                            cursor.getString(INDEX_TYPECODE),
-                            cursor.getInt(INDEX_MONEY))
+                Record(
+                    cursor.getString(0),                          // ID
+                    cursor.getString(1).toDate(),                 // DATE
+                    cursor.getString(2),                          // TYPE_CODE
+                    cursor.getInt(3)                              // MONEY
+                )
             )
         }
         return RecordList(list)

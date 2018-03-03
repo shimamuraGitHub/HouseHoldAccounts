@@ -27,4 +27,6 @@ class RecordTypeList(val list:List<RecordType>) {
         val hoge = list.map { it.code!!.toInt() }
         return (hoge.sorted().first { hoge.test(it) } + 1).toCode(3)
     }
+
+    fun indexOfByCode(record: Record) = list.indexOfFirst { it.code.equals(record.type!!) }
 }
