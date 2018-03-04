@@ -10,6 +10,7 @@ import android.widget.Spinner
 import android.widget.TableLayout
 import com.exsample.householdaccounts.R
 import com.exsample.householdaccounts.controller.activity.find
+import com.exsample.householdaccounts.controller.activity.getInflate
 import com.exsample.householdaccounts.controller.activity.navigation.NavigationListener
 import com.exsample.householdaccounts.controller.widgets.list.HouseHoldLayout
 import com.exsample.householdaccounts.controller.widgets.setRecordTypeAdapter
@@ -22,58 +23,35 @@ import java.util.*
 /**
  * Created by ryosuke on 2018/03/03.
  */
-abstract class AbstractActivity: NavigationListener()  {
+abstract class AbstractActivity : NavigationListener() {
 
-    val dbHelper = DBOpenHelper(context = this,version = 1)
+    val dbHelper = DBOpenHelper(context = this, version = 1)
+    val service by lazy { ListService(dbHelper) }
 
-    lateinit var service : ListService
+    val layout by lazy { getInflate(R.layout.search_record_list) }
 
-    val layout by lazy{getInflate()}
+    val houseHoldLayout by lazy { HouseHoldLayout(find<TableLayout>(R.id.accountTable)) }
+    val typeSpinner by lazy { layout.find<Spinner>(R.id.spinner) }
+    val fromDateSpinner by lazy { layout.find<Spinner>(R.id.dateSpinner1) }
+    val toDateSpinner by lazy { layout.find<Spinner>(R.id.dateSpinner2) }
+    val fromMoneyEdit by lazy { layout.find<EditText>(R.id.moneyEdit1) }
+    val toMoneyEdit by lazy { layout.find<EditText>(R.id.moneyEdit2) }
+    val searchButton by lazy { layout.find<Button>(R.id.search) }
 
-    lateinit var houseHoldLayout: HouseHoldLayout
-    val typeSpinner by lazy{layout.find<Spinner>(R.id.spinner)}
-    lateinit var fromDateSpinner : Spinner
-    lateinit var toDateSpinner : Spinner
-    lateinit var fromMoneyEdit : EditText
-    lateinit var toMoneyEdit : EditText
-
-    lateinit var recordTypeList:RecordTypeList
+    val recordTypeList by lazy { service.findAllRecordTypes() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        service = ListService(dbHelper)
-
-        recordTypeList = service.findAllRecordTypes()
-
-        houseHoldLayout = HouseHoldLayout(find<TableLayout>(R.id.accountTable))
-        val test = service.test()
-        houseHoldLayout.build(service.findAllRecord(),recordTypeList)
+        houseHoldLayout.build(service.findAllRecord(), recordTypeList)
 
         fab.setOnClickListener {
-
-//            val layout = getInflate()
             AlertDialog.Builder(this).setView(layout).show()
-            findLayoutViews(layout)
-
-            service.setSpinners(fromDateSpinner,toDateSpinner)
-
+            service.setSpinners(fromDateSpinner, toDateSpinner)
             typeSpinner.setRecordTypeAdapter(recordTypeList)
-
-            val search = layout.find<Button>(R.id.search)
-            search.setOnClickListener {search(recordTypeList)}
+            searchButton.setOnClickListener { search(recordTypeList) }
         }
-    }
-
-    private fun getInflate() = LayoutInflater.from(this).inflate(R.layout.search_record_list,null)
-
-    private fun findLayoutViews(layout: View){
-//        typeSpinner = layout.find<Spinner>(R.id.spinner)
-        fromDateSpinner = layout.find<Spinner>(R.id.dateSpinner1)
-        toDateSpinner = layout.find<Spinner>(R.id.dateSpinner2)
-        fromMoneyEdit = layout.find<EditText>(R.id.moneyEdit1)
-        toMoneyEdit = layout.find<EditText>(R.id.moneyEdit2)
     }
 
     protected abstract fun search(typeList: RecordTypeList)
