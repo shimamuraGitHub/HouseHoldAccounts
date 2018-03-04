@@ -27,7 +27,7 @@ class ConfigActivity:AbstractActivity(){
     fun update(v:View){
 
         buildDialog({_,_->
-            val from = recordTypes.findByNameSpinner(typeSpinner)
+            val from = recordTypes.findBySelectedName(typeSpinner)
 
             val message = service.update(from,nameEdit,isExpenditure)
 
@@ -44,7 +44,7 @@ class ConfigActivity:AbstractActivity(){
 
         buildDialog({_,_->
 
-            val message = service.erase(recordTypes.findByNameSpinner(typeSpinner))
+            val message = service.erase(recordTypes.findBySelectedName(typeSpinner))
 
             if(message.success){
                 resetRecordTypes()

@@ -3,6 +3,7 @@ package com.exsample.householdaccounts.domain
 import android.widget.EditText
 import android.widget.Spinner
 import com.exsample.householdaccounts.controller.widgets.text
+import com.exsample.householdaccounts.util.existsNext
 import com.exsample.householdaccounts.util.toCode
 
 /**
@@ -12,20 +13,26 @@ class RecordTypeList(val list:List<RecordType>) {
 
     fun<T> map(func:(RecordType) -> T) = list.map(func)
 
-    fun first() = list.first()
+    fun findLatest(record: Record) = list
+            .filter { it.name!! == record.recordType!!.name }
+            .sortedBy { it.atStarted!!.time }
+            .reversed()
+            .first()
 
-    fun findByCode(record: Record) = list.filter { it.code.equals(record.type) }.first()
+    fun findByRecord(record: Record) = list
+            .filter { it.code.equals(record.type) }
+            .filter{it.atStartedEqualsOrBefore(record)}
+            .first {if(it.atEnded != null) it.atEndedAfter(record) else true}
 
-    fun findByNameSpinner(typeNames: Spinner) = list.filter { it.name!!.equals(typeNames.selectedItem) }.first()
+    fun findBySelectedName(names: Spinner) = list.first { it.name!! == names.selectedItem }
 
-    fun existsByName(edit: EditText) = list.any { it.name!!.equals(edit.text()) }
+    fun existsEqualsName(edit: EditText) = list.any { it.name!! == edit.text() }
 
     fun hasNameWithDifferCode(type: RecordType) = list.any { it.equalsNameWithDifferCode(type) }
 
-    fun createEnableMinCode() : String {
-        fun List<Int>.test(test:Int) = !this.any{it.equals(test + 1)}
-        val hoge = list.map { it.code!!.toInt() }
-        return (hoge.sorted().first { hoge.test(it) } + 1).toCode(3)
+    fun findNotExistsMinCode() : String {
+        val intCodes = list.map { it.code!!.toInt() }
+        return (intCodes.sorted().first { !intCodes.existsNext(it) } + 1).toCode(3)
     }
 
     fun indexOfByCode(record: Record) = list.indexOfFirst { it.code.equals(record.type!!) }

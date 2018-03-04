@@ -13,6 +13,16 @@ class RecordTypeRepository(helper: DBOpenHelper) {
 
     val mapper = RecordTypeMapper(helper)
 
+    fun findAll() :RecordTypeList{
+        val cursor = mapper.findAll()
+        val list = mutableListOf<RecordType>()
+
+        while(cursor.moveToNext()){
+            list.add(create(cursor))
+        }
+        return RecordTypeList(list)
+    }
+
     fun findAllEnabled() : RecordTypeList {
 
         val cursor = mapper.findAllEnabled()

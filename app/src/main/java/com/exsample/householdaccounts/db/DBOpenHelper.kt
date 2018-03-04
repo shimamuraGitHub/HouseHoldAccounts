@@ -22,8 +22,11 @@ class DBOpenHelper(
         // RECORD_TYPEのカラム構造を変更したときに
 //        db.execSQL("DROP TABLE RECORD_TYPE")
 
+//        db.execSQL("DELETE FROM RECORD WHERE MONEY = 99999")
+
         db.execSQL(createRecord)
         db.execSQL(createType)
+
 
         /* RECORD_TYPEの初期コード値を変更したいときに */
 //        delete(db=db,tableName = "RECORD_TYPE")

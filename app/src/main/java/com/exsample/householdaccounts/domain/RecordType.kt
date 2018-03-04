@@ -22,4 +22,8 @@ data class RecordType(
 
     fun equalsCode(type:RecordType) = this.code!!.equals(type.code)
 
+    fun atStartedEqualsOrBefore(record: Record) = (atStarted != null) && (atStarted.equals(record.updatedAt) || atStarted.before(record.updatedAt))
+
+    fun atEndedAfter(record: Record) = (this.atEnded != null) && (this.atEnded.after(record.updatedAt))
+
 }

@@ -1,9 +1,12 @@
 package com.exsample.householdaccounts.mapper
 
+import android.content.ContentValues
 import android.database.Cursor
 import com.exsample.householdaccounts.db.DBOpenHelper
 import com.exsample.householdaccounts.db.SQLiteExtendFuns
 import com.exsample.householdaccounts.domain.Record
+import com.exsample.householdaccounts.util.toSQLString
+import com.exsample.householdaccounts.util.toTimestamp
 import java.sql.Date
 
 /**
@@ -13,15 +16,26 @@ class RecordMapper (val helper: DBOpenHelper) : SQLiteExtendFuns {
 
     val db = helper.readableDatabase
 
+    val ID = "ID"
+    val DATE = "DATE"
+    val MONEY = "MONEY"
+    val TYPE_CODE = "TYPE_CODE"
+    val UPDATED_AT = "UPDATED_AT"
+
+    val TABLE_NAME = "RECORD"
+
     fun insert(record:Record):Int{
         val sql = """
             INSERT INTO RECORD
-                (ID,DATE,TYPE_CODE,MONEY)
+                (ID,DATE,TYPE_CODE,MONEY,CREATED_AT,UPDATED_AT)
             VALUES(
                 '${record.id}',
-                '${Date(record.date!!.time)}',
+                '${record.date!!.toTimestamp().toString()}',
                 '${record.type}',
-                 ${record.money}
+                 ${record.money},
+                 '${record.createdAt!!.toTimestamp().toString()}',
+                 '${record.updatedAt!!.toTimestamp().toString()}'
+
             )
         """.trimIndent()
         db.execSQL(sql)
@@ -39,30 +53,45 @@ class RecordMapper (val helper: DBOpenHelper) : SQLiteExtendFuns {
         val hasToDate = if(toRecord.date != null) 1 else 0
         val hasToMoney = if(toRecord.money != null) 1 else 0
         val count = hasFromDate + hasFromMoney + hasType + hasToDate + hasToMoney
-        val sql = StringBuilder(" SELECT * FROM RECORD ")
+        val sql = StringBuilder(" SELECT * FROM RECORD R")
+        sql.append(" INNER JOIN RECORD_TYPE RT ")
+        sql.append(" ON R.TYPE_CODE = RT.CODE")
+        sql.append(" AND RT.AT_STARTED <= R.UPDATED_AT")
+        sql.append(" AND ifnull(RT.AT_ENDED,'9999-12-31 23:59:59.9') > R.UPDATED_AT")
         if (count > 0){
-            sql.append(" WHERE MONEY > 0 ")
+            sql.append(" WHERE R.MONEY > 0 ")
         }
         if(hasFromDate > 0){
             sql.append(" AND ")
-            sql.append(" DATE > '${fromRecord.getAdjustedDate()}' ")
+            sql.append(" R.DATE > '${fromRecord.date!!.toSQLString()}' ")
         }
         if(hasToDate > 0){
             sql.append(" AND ")
-            sql.append(" DATE < '${toRecord.getAdjustedDate()}' ")
+            sql.append(" R.DATE < '${toRecord.date!!.toSQLString()}' ")
         }
         if(hasType > 0){
             sql.append(" AND ")
-            sql.append(" TYPE_CODE = '${fromRecord.type}' ")
+            sql.append(" RT.NAME = '${fromRecord.getTypeName()}' ")
         }
         if(hasFromMoney > 0){
             sql.append(" AND ")
-            sql.append(" MONEY >  ${fromRecord.money} ")
+            sql.append(" R.MONEY >  ${fromRecord.money} ")
         }
         if(hasToMoney > 0){
             sql.append(" AND ")
-            sql.append(" MONEY < ${toRecord.money} ")
+            sql.append(" R.MONEY < ${toRecord.money} ")
         }
+        sql.append(" ORDER BY R.DATE ")
         return db.rawQuery(sql.toString(), arrayOf())
+    }
+
+    fun update(record: Record):Int{
+        val values = ContentValues()
+        values.put(DATE, record.date!!.toSQLString())
+        values.put(MONEY, record.money)
+        values.put(TYPE_CODE, record.type)
+        values.put(UPDATED_AT, record.updatedAt!!.toTimestamp().toString())
+
+        return update(db,TABLE_NAME,values,"ID = ?",arrayOf(record.id!!))
     }
 }

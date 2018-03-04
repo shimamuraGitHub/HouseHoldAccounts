@@ -25,6 +25,8 @@ class RecordTypeMapper(val helper: DBOpenHelper): SQLiteExtendFuns {
 
     fun findAllEnabled() = query(db=db, tableName = TABLE_NAME, selection = "ENABLED = 1")
 
+    fun findAll() = query(db=db, tableName = TABLE_NAME)
+
     fun update(type: RecordType):Int{
 
         val values = ContentValues()
@@ -45,11 +47,7 @@ class RecordTypeMapper(val helper: DBOpenHelper): SQLiteExtendFuns {
         values.put(ENABLED, 0)
         values.put(AT_ENDED,Date().toTimestamp().toString())
 
-        val clause = "CODE = ? AND ENABLED = 1"
-
-        val args = arrayOf(type.code!!)
-
-        return update(db,TABLE_NAME,values,clause,args)
+        return update(db,TABLE_NAME,values,"CODE = ? AND ENABLED = 1",arrayOf(type.code!!))
     }
 
     fun insert(type: RecordType):Int{

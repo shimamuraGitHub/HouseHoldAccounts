@@ -16,6 +16,8 @@ class RecordAgent(helper:DBOpenHelper) {
 
     fun findAllEnabledTypes() = typeRepo.findAllEnabled()
 
+    fun findAllTypes() = typeRepo.findAll()
+
     fun erase(record: Record) = repo.delete(record)
 
     fun search(fromRecord: Record, toRecord: Record) = repo.search(fromRecord, toRecord)
@@ -25,4 +27,6 @@ class RecordAgent(helper:DBOpenHelper) {
     fun toDisableType(recordType: RecordType) = typeRepo.toDisable(recordType)
 
     fun registerType(recordType: RecordType) = typeRepo.insert(recordType)
+
+    fun update(record: Record) = repo.update(record)
 }

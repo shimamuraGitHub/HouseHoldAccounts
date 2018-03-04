@@ -24,11 +24,11 @@ class ConfigService(helper: DBOpenHelper) {
 
         val recordTypes = findAllEnabled()
 
-        if(recordTypes.existsByName(name)){
+        if(recordTypes.existsEqualsName(name)){
             return createMessage(false, "項目名「${name.text()}」は既に設定されています。")
         }
 
-        val code = recordTypes.createEnableMinCode()
+        val code = recordTypes.findNotExistsMinCode()
 
         val target = recordTypeFactory.create(name,code,isExpenditure)
 

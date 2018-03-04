@@ -5,10 +5,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import com.exsample.householdaccounts.factory.RecordFactory
 import com.exsample.householdaccounts.controller.message.ResultMessage
-import com.exsample.householdaccounts.controller.widgets.isBlank
-import com.exsample.householdaccounts.controller.widgets.isNullOrBlank
-import com.exsample.householdaccounts.controller.widgets.isZero
-import com.exsample.householdaccounts.controller.widgets.pop
+import com.exsample.householdaccounts.controller.widgets.*
 import com.exsample.householdaccounts.db.DBOpenHelper
 import com.exsample.householdaccounts.domain.Record
 import com.exsample.householdaccounts.domain.RecordAgent
@@ -17,20 +14,20 @@ import com.exsample.householdaccounts.domain.RecordType
 /**
  * Created by ryosuke on 2018/02/10.
  */
-class MainService(helper: DBOpenHelper){
+class MainService(helper: DBOpenHelper):DateSpinnerFunctions{
 
     val recordAgent = RecordAgent(helper)
 
     val recordFactory = RecordFactory()
 
-    fun registerRecord(moneyEdit: EditText, typeSpinner: Spinner,dateSpinner: Spinner) : ResultMessage {
+    fun register(moneyEdit: EditText, typeSpinner: Spinner, dateSpinner: Spinner) : ResultMessage {
 
         if(moneyEdit.isNullOrBlank()){
             return ResultMessage(false,"ERROR","金額が入力されていません")
         }
 
         val typeList = recordAgent.findAllEnabledTypes()
-        val selectedType = typeList.findByNameSpinner(typeSpinner)
+        val selectedType = typeList.findBySelectedName(typeSpinner)
 
         val record = recordFactory.create(moneyEdit,selectedType,dateSpinner)
 
@@ -53,5 +50,16 @@ class MainService(helper: DBOpenHelper){
             return
         }
         moneyEdit.append(numberButton.text)
+    }
+
+    fun update(target: Record, dateSpinner: Spinner, moneyEdit: EditText, typeSpinner: Spinner):ResultMessage{
+        val types = recordAgent.findAllEnabledTypes()
+        val selectedType = types.findBySelectedName(typeSpinner)
+        val changed = recordFactory.create(target,dateSpinner,selectedType,moneyEdit)
+
+        if(recordAgent.update(changed) == 1){
+            return ResultMessage(true,message="更新に成功しました。")
+        }
+        return ResultMessage(false,"ERROR","更新に失敗しました。")
     }
 }

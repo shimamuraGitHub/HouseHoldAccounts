@@ -1,6 +1,7 @@
 package com.exsample.householdaccounts.controller.widgets.list
 
 import android.view.Gravity
+import android.widget.CheckedTextView
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
@@ -10,7 +11,10 @@ import com.exsample.householdaccounts.controller.message.ItemsMessage
 import com.exsample.householdaccounts.controller.widgets.DialogBuilder
 import com.exsample.householdaccounts.domain.Record
 import com.exsample.householdaccounts.domain.RecordList
+import com.exsample.householdaccounts.domain.RecordType
 import com.exsample.householdaccounts.domain.RecordTypeList
+import com.exsample.householdaccounts.util.toInt
+import com.exsample.householdaccounts.util.toSQLString
 
 /**
  * Created by ryosuke on 2018/02/12.
@@ -24,18 +28,21 @@ class HouseHoldLayout(val tableLayout: TableLayout){
         indexRow.addView(createIndexText("日付"))
         indexRow.addView(createIndexText("項目"))
         indexRow.addView(createIndexText("金額"))
+        indexRow.addView(createIndexText("旧"))
         tableLayout.addView(indexRow)
 
         recordList.forEach {
+            val check = it
 
-            it.recordType = typeList.findByCode(it)
+            it.recordType = typeList.findByRecord(it)
 
             val recordRow = TableRow(tableLayout.context)
 
             recordRow.setOnClickListener(it)
-            recordRow.addView(createRecordText(it.getAdjustedDate()))
+            recordRow.addView(createRecordText(it.date!!.toSQLString()))
             recordRow.addView(createRecordText(it.getTypeName()!!,Gravity.LEFT))
             recordRow.addView(createRecordText(it.toStringMoney(),Gravity.RIGHT))
+            recordRow.addView(shouldEditCheck(it,typeList))
             tableLayout.addView(recordRow)
         }
     }
@@ -64,12 +71,17 @@ class HouseHoldLayout(val tableLayout: TableLayout){
         return recordText
     }
 
+    private fun shouldEditCheck(record: Record, typeList: RecordTypeList):CheckedTextView{
+        val check = CheckedTextView(tableLayout.context)
+        check.text = if(record.isLatestType(typeList))"〇" else "×"
+        return check
+    }
+
     private fun TableRow.setOnClickListener(record: Record) = setOnClickListener{buildDialog(record).show()}
 
     private fun buildDialog(record: Record): DialogBuilder {
 
-
-        val title = "${record.getAdjustedDate()} ${record.getTypeName()} ${record.money}円"
+        val title = "${record.date!!.toSQLString()} ${record.getTypeName()} ${record.money}円"
         val items = arrayOf("編集", "削除")
 
         val builder = DialogBuilder(tableLayout.context)

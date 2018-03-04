@@ -28,8 +28,10 @@ abstract class AbstractActivity: NavigationListener()  {
 
     lateinit var service : ListService
 
+    val layout by lazy{getInflate()}
+
     lateinit var houseHoldLayout: HouseHoldLayout
-    lateinit var typeSpinner : Spinner
+    val typeSpinner by lazy{layout.find<Spinner>(R.id.spinner)}
     lateinit var fromDateSpinner : Spinner
     lateinit var toDateSpinner : Spinner
     lateinit var fromMoneyEdit : EditText
@@ -46,11 +48,12 @@ abstract class AbstractActivity: NavigationListener()  {
         recordTypeList = service.findAllRecordTypes()
 
         houseHoldLayout = HouseHoldLayout(find<TableLayout>(R.id.accountTable))
+        val test = service.test()
         houseHoldLayout.build(service.findAllRecord(),recordTypeList)
 
         fab.setOnClickListener {
 
-            val layout = getInflate()
+//            val layout = getInflate()
             AlertDialog.Builder(this).setView(layout).show()
             findLayoutViews(layout)
 
@@ -66,7 +69,7 @@ abstract class AbstractActivity: NavigationListener()  {
     private fun getInflate() = LayoutInflater.from(this).inflate(R.layout.search_record_list,null)
 
     private fun findLayoutViews(layout: View){
-        typeSpinner = layout.find<Spinner>(R.id.spinner)
+//        typeSpinner = layout.find<Spinner>(R.id.spinner)
         fromDateSpinner = layout.find<Spinner>(R.id.dateSpinner1)
         toDateSpinner = layout.find<Spinner>(R.id.dateSpinner2)
         fromMoneyEdit = layout.find<EditText>(R.id.moneyEdit1)

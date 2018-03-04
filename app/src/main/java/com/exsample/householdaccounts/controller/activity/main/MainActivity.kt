@@ -21,7 +21,7 @@ class MainActivity : AbstractActivity() {
      */
     fun register(v: View){
 
-        val message = service.registerRecord(moneyEdit,typeSpinner,dateSpinner)
+        val message = service.register(moneyEdit,typeSpinner,dateSpinner)
 
         if(message.success){
             moneyEdit.clear()
@@ -31,7 +31,15 @@ class MainActivity : AbstractActivity() {
         DialogBuilder(this).buildMessage(message).show()
     }
 
-    override fun update(target: Record) {}
+    override fun update(target: Record) {
+        val message = service.update(target,dateSpinner,moneyEdit, typeSpinner)
+        if(message.success){
+            moneyEdit.clear()
+            Toast.makeText(this, message.message, Toast.LENGTH_LONG).show()
+            startActivityForResult(Intent(this, ListActivity::class.java),1)
+        }
+        DialogBuilder(this).buildMessage(message).show()
+    }
 
     /**
      * 各数字ボタン押下時の処理.

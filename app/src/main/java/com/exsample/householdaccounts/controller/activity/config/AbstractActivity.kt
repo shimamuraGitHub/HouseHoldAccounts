@@ -79,7 +79,7 @@ abstract class AbstractActivity : NavigationListener() {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
                 nameEdit.text = typeSpinner.toEditableSelectedItem()
-                isExpenditure.isChecked = recordTypes.findByNameSpinner(typeSpinner).isExpenditure!!
+                isExpenditure.isChecked = recordTypes.findBySelectedName(typeSpinner).isExpenditure!!
             }
         }
     }

@@ -8,6 +8,7 @@ import com.exsample.householdaccounts.factory.RecordFactory
 import com.exsample.householdaccounts.db.DBOpenHelper
 import com.exsample.householdaccounts.domain.Record
 import com.exsample.householdaccounts.domain.RecordAgent
+import com.exsample.householdaccounts.domain.RecordList
 import com.exsample.householdaccounts.domain.RecordType
 import java.util.*
 
@@ -19,9 +20,13 @@ class ListService(helper: DBOpenHelper) : Year_MonthSpinnerFunctions {
     val recordAgent = RecordAgent(helper)
     val recordFactory = RecordFactory()
 
-    fun findAllRecord() = recordAgent.findAll()
+    fun findAllRecord(): RecordList {
+        return recordAgent.search(Record(),Record())
+    }
 
-    fun findAllRecordTypes() = recordAgent.findAllEnabledTypes()
+    fun test() = recordAgent.findAll()
+
+    fun findAllRecordTypes() = recordAgent.findAllTypes()
 
     fun erase(target: Record) = recordAgent.erase(target)
 

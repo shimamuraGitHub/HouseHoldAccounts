@@ -37,6 +37,10 @@ fun Int.toCode(digit:Int): String {
 
 fun Date.toTimestamp() = Timestamp(this.time)
 
+fun Date.toSQLString() = java.sql.Date(this.time).toString()
+
+fun Date.toSQLiteString() = this.toTimestamp().toString()
+
 fun Calendar.getYear() = this.get(Calendar.YEAR)
 
 fun Calendar.getMonth() = this.get(Calendar.MONTH)
@@ -54,4 +58,6 @@ fun findLastDay(year:Int,month:Int):Int{
     }
     return lastDay
 }
+
+fun List<Int>.existsNext(num:Int) = this.any{it.equals(num + 1)}
 

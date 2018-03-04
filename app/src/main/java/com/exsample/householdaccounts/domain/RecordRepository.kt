@@ -29,7 +29,9 @@ class RecordRepository(helper: DBOpenHelper) {
                     cursor.getString(0),                          // ID
                     cursor.getString(1).toDate(),                 // DATE
                     cursor.getString(2),                          // TYPE_CODE
-                    cursor.getInt(3)                              // MONEY
+                    cursor.getInt(3),                              // MONEY
+                    cursor.getString(4)?.toDate(),
+                    cursor.getString(5)?.toDate()
                 )
             )
         }
@@ -37,5 +39,7 @@ class RecordRepository(helper: DBOpenHelper) {
     }
 
     fun delete(record: Record) = mapper.delete(record)
+
+    fun update(record: Record) = mapper.update(record)
 
 }
