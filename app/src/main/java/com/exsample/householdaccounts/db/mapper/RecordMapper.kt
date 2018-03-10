@@ -1,18 +1,17 @@
-package com.exsample.householdaccounts.mapper
+package com.exsample.householdaccounts.db.mapper
 
 import android.content.ContentValues
 import android.database.Cursor
 import com.exsample.householdaccounts.db.DBOpenHelper
-import com.exsample.householdaccounts.db.SQLiteExtendFuns
-import com.exsample.householdaccounts.domain.Record
+import com.exsample.householdaccounts.db.SQLiteExtendFun
+import com.exsample.householdaccounts.domain.record.Record
 import com.exsample.householdaccounts.util.toSQLString
 import com.exsample.householdaccounts.util.toTimestamp
-import java.sql.Date
 
 /**
  * Created by ryosuke on 2018/02/05.
  */
-class RecordMapper (val helper: DBOpenHelper) : SQLiteExtendFuns {
+class RecordMapper (val helper: DBOpenHelper) : SQLiteExtendFun {
 
     val db = helper.readableDatabase
 
@@ -24,7 +23,7 @@ class RecordMapper (val helper: DBOpenHelper) : SQLiteExtendFuns {
 
     val TABLE_NAME = "RECORD"
 
-    fun insert(record:Record):Int{
+    fun insert(record: Record):Int{
         val sql = """
             INSERT INTO RECORD
                 (ID,DATE,TYPE_CODE,MONEY,CREATED_AT,UPDATED_AT)
@@ -46,7 +45,7 @@ class RecordMapper (val helper: DBOpenHelper) : SQLiteExtendFuns {
 
     fun delete(record: Record) = db.delete("RECORD","ID = ?", arrayOf(record.id))
 
-    fun search(fromRecord: Record,toRecord: Record): Cursor {
+    fun search(fromRecord: Record, toRecord: Record): Cursor {
         val hasFromDate = if(fromRecord.date != null) 1 else 0
         val hasFromMoney = if(fromRecord.money != null) 1 else 0
         val hasType = if(fromRecord.type != null) 1 else 0

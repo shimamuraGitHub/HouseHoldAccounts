@@ -9,11 +9,9 @@ import com.exsample.householdaccounts.controller.activity.list.ListActivity
 import com.exsample.householdaccounts.controller.message.ConfirmMessage
 import com.exsample.householdaccounts.controller.message.ItemsMessage
 import com.exsample.householdaccounts.controller.widgets.DialogBuilder
-import com.exsample.householdaccounts.domain.Record
-import com.exsample.householdaccounts.domain.RecordList
-import com.exsample.householdaccounts.domain.RecordType
-import com.exsample.householdaccounts.domain.RecordTypeList
-import com.exsample.householdaccounts.util.toInt
+import com.exsample.householdaccounts.domain.record.Record
+import com.exsample.householdaccounts.domain.record.RecordList
+import com.exsample.householdaccounts.domain.type.RecordTypeList
 import com.exsample.householdaccounts.util.toSQLString
 
 /**
@@ -21,7 +19,7 @@ import com.exsample.householdaccounts.util.toSQLString
  */
 class HouseHoldLayout(val tableLayout: TableLayout){
 
-    fun build(recordList:RecordList,typeList:RecordTypeList){
+    fun build(recordList: RecordList, typeList: RecordTypeList){
 
         val indexRow = TableRow(tableLayout.context)
 
@@ -41,7 +39,7 @@ class HouseHoldLayout(val tableLayout: TableLayout){
             recordRow.setOnClickListener(it)
             recordRow.addView(createRecordText(it.date!!.toSQLString()))
             recordRow.addView(createRecordText(it.getTypeName()!!,Gravity.LEFT))
-            recordRow.addView(createRecordText(it.toStringMoney(),Gravity.RIGHT))
+            recordRow.addView(createRecordText(it.money.toString(),Gravity.RIGHT))
             recordRow.addView(shouldEditCheck(it,typeList))
             tableLayout.addView(recordRow)
         }

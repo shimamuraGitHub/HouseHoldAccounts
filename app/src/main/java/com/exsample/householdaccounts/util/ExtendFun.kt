@@ -1,5 +1,6 @@
 package com.exsample.householdaccounts.util
 
+import android.database.Cursor
 import android.text.SpannableStringBuilder
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
@@ -22,7 +23,6 @@ fun String.toDate() = SimpleDateFormat(getFormat()).parse(this)
 private fun String.getFormat() = when {
         this.matches(DATE_HYPHEN) -> "yyyy-MM-dd"
         this.matches(SQL_TIMESTAMP_HYPHEN) -> "yyyy-MM-dd hh:mm:ss.S"
-
         else -> ""
     }
 
@@ -39,8 +39,6 @@ fun Date.toTimestamp() = Timestamp(this.time)
 
 fun Date.toSQLString() = java.sql.Date(this.time).toString()
 
-fun Date.toSQLiteString() = this.toTimestamp().toString()
-
 fun Calendar.getYear() = this.get(Calendar.YEAR)
 
 fun Calendar.getMonth() = this.get(Calendar.MONTH)
@@ -49,15 +47,17 @@ fun Calendar.getDayOfMonth() = this.get(Calendar.DAY_OF_MONTH)
 
 fun Calendar.isLeapYear() = this.getYear() % 4 == 0
 
-fun findLastDay(year:Int,month:Int):Int{
-    val lastDay = when(month){
+fun findLastDay(year:Int,month:Int) = when(month) {
         1, 3, 5, 7, 8, 10, 12 -> 31
         4, 6, 9, 11 -> 30
         2 -> if (year % 4 == 0) 29 else 28
         else -> 0
     }
-    return lastDay
-}
 
-fun List<Int>.existsNext(num:Int) = this.any{it.equals(num + 1)}
+fun List<Int>.existsNext(num:Int) = this.any{ it == (num + 1) }
 
+fun Date.until(until:Date) = (this == until || this.before(until))
+
+fun Cursor.getBoolean(var1:Int) = this.getInt(var1).toBoolean()
+
+fun Cursor.getDate(var1:Int) = this.getString(var1)?.toDate()

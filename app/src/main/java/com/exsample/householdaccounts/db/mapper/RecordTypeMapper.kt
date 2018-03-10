@@ -1,9 +1,9 @@
-package com.exsample.householdaccounts.mapper
+package com.exsample.householdaccounts.db.mapper
 
 import android.content.ContentValues
 import com.exsample.householdaccounts.db.DBOpenHelper
-import com.exsample.householdaccounts.db.SQLiteExtendFuns
-import com.exsample.householdaccounts.domain.RecordType
+import com.exsample.householdaccounts.db.SQLiteExtendFun
+import com.exsample.householdaccounts.domain.type.RecordType
 import com.exsample.householdaccounts.util.toInt
 import com.exsample.householdaccounts.util.toTimestamp
 import java.util.*
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Created by ryosuke on 2018/02/08.
  */
-class RecordTypeMapper(val helper: DBOpenHelper): SQLiteExtendFuns {
+class RecordTypeMapper(val helper: DBOpenHelper): SQLiteExtendFun {
 
     val db = helper.readableDatabase
 

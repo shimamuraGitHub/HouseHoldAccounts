@@ -1,9 +1,8 @@
-package com.exsample.householdaccounts.domain
+package com.exsample.householdaccounts.domain.record
 
-import com.exsample.householdaccounts.util.toSQLString
+import com.exsample.householdaccounts.domain.type.RecordType
+import com.exsample.householdaccounts.domain.type.RecordTypeList
 import java.io.Serializable
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -16,16 +15,13 @@ data class Record(
         val money : Int? = null,
         val createdAt:Date? = null,
         val updatedAt:Date? = null
-
 ):Serializable
 {
     private val serialVersionUID = 3820984320L
 
-    var recordType:RecordType? = null
-
-    fun toStringMoney() = money.toString()
+    var recordType: RecordType? = null
 
     fun getTypeName() = recordType?.name
 
-    fun isLatestType(typeList: RecordTypeList) = recordType!!.equals(typeList.findLatest(this))
+    fun isLatestType(typeList: RecordTypeList) = (recordType == typeList.findLatestRegistered(this))
 }

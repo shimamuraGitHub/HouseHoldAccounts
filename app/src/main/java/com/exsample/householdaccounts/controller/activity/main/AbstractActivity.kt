@@ -10,8 +10,8 @@ import com.exsample.householdaccounts.controller.activity.navigation.NavigationL
 import com.exsample.householdaccounts.controller.widgets.DateSpinnerFunctions
 import com.exsample.householdaccounts.controller.widgets.setRecordTypeAdapter
 import com.exsample.householdaccounts.db.DBOpenHelper
-import com.exsample.householdaccounts.domain.Record
-import com.exsample.householdaccounts.domain.RecordTypeList
+import com.exsample.householdaccounts.domain.record.Record
+import com.exsample.householdaccounts.domain.type.RecordTypeList
 import com.exsample.householdaccounts.util.TARGET
 import com.exsample.householdaccounts.util.toEditable
 
@@ -20,14 +20,14 @@ import com.exsample.householdaccounts.util.toEditable
  */
 abstract class AbstractActivity : NavigationListener(), DateSpinnerFunctions {
 
-    val dbHelper = DBOpenHelper(context = this, version = 1)
+    private val dbHelper = DBOpenHelper(this, 1)
     val service by lazy { MainService(dbHelper) }
 
     val dateSpinner by lazy { find<Spinner>(R.id.dates) }
-    val typeSpinner by lazy { find<Spinner>(R.id.typeNames) }
+    val typeSpinner by lazy { find<Spinner>(R.id.mainTypeNames) }
     val moneyEdit by lazy { find<EditText>(R.id.moneyEdit) }
 
-    val executeButton by lazy { find<Button>(R.id.execute) }
+    val execute by lazy { find<Button>(R.id.execute) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +49,11 @@ abstract class AbstractActivity : NavigationListener(), DateSpinnerFunctions {
     }
 
     private fun setForEdit(target: Record, recordTypes: RecordTypeList) {
-        moneyEdit.text.append(target.toStringMoney())
+        moneyEdit.text.append(target.money.toString())
         typeSpinner.setSelection(recordTypes.indexOfByCode(target))
         dateSpinner.setDatePosition(target.date!!)
-        executeButton.text = "変更".toEditable()
-        executeButton.setOnClickListener { v -> update(target) }
+        execute.text = "変更".toEditable()
+        execute.setOnClickListener {_-> update(target) }
     }
 
     abstract fun update(target: Record)

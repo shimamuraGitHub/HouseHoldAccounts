@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.*
 import com.exsample.householdaccounts.controller.activity.list.ListActivity
 import com.exsample.householdaccounts.controller.widgets.*
-import com.exsample.householdaccounts.domain.Record
+import com.exsample.householdaccounts.domain.record.Record
 
 class MainActivity : AbstractActivity() {
 
@@ -21,24 +21,24 @@ class MainActivity : AbstractActivity() {
      */
     fun register(v: View){
 
-        val message = service.register(moneyEdit,typeSpinner,dateSpinner)
+        val result = service.register(moneyEdit,typeSpinner,dateSpinner)
 
-        if(message.success){
+        if(result.success){
             moneyEdit.clear()
-            Toast.makeText(this, message.message, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
             return
         }
-        DialogBuilder(this).buildMessage(message).show()
+        DialogBuilder(this).buildMessage(result).show()
     }
 
     override fun update(target: Record) {
-        val message = service.update(target,dateSpinner,moneyEdit, typeSpinner)
-        if(message.success){
+        val result = service.update(target,dateSpinner,moneyEdit, typeSpinner)
+        if(result.success){
             moneyEdit.clear()
-            Toast.makeText(this, message.message, Toast.LENGTH_LONG).show()
-            startActivityForResult(Intent(this, ListActivity::class.java),1)
+            Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, ListActivity::class.java))
         }
-        DialogBuilder(this).buildMessage(message).show()
+        DialogBuilder(this).buildMessage(result).show()
     }
 
     /**
@@ -58,5 +58,5 @@ class MainActivity : AbstractActivity() {
      */
     fun clear(v:View) = moneyEdit.clear()
 
-    fun toList(v:View?) = startActivityForResult(Intent(this, ListActivity::class.java),1)
+    fun toList(v:View?) = startActivity(Intent(this, ListActivity::class.java))
 }

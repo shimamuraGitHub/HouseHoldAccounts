@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 /**
  * Created by ryosuke on 2018/03/02.
  */
-interface SQLiteExtendFuns {
+interface SQLiteExtendFun {
     fun query(
             db : SQLiteDatabase,
             tableName:String,

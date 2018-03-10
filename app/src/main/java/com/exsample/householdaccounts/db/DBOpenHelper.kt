@@ -1,6 +1,5 @@
 package com.exsample.householdaccounts.db
 
-import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -10,10 +9,10 @@ import android.database.sqlite.SQLiteOpenHelper
  */
 class DBOpenHelper(
         context: Context?,
+        version: Int,
         name: String? = "houseHoldAccount",
-        factory: SQLiteDatabase.CursorFactory? = null,
-        version: Int
-) : SQLiteOpenHelper(context, name, factory, version) ,SQLiteExtendFuns{
+        factory: SQLiteDatabase.CursorFactory? = null
+) : SQLiteOpenHelper(context, name, factory, version) ,SQLiteExtendFun{
 
     override fun onCreate(db: SQLiteDatabase) {
 

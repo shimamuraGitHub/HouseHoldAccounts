@@ -3,22 +3,23 @@ package com.exsample.householdaccounts.controller.activity.main
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import com.exsample.householdaccounts.factory.RecordFactory
+import com.exsample.householdaccounts.domain.factory.RecordFactory
 import com.exsample.householdaccounts.controller.message.ResultMessage
 import com.exsample.householdaccounts.controller.widgets.*
 import com.exsample.householdaccounts.db.DBOpenHelper
-import com.exsample.householdaccounts.domain.Record
-import com.exsample.householdaccounts.domain.RecordAgent
-import com.exsample.householdaccounts.domain.RecordType
+import com.exsample.householdaccounts.domain.record.Record
+import com.exsample.householdaccounts.domain.record.RecordAgent
+import com.exsample.householdaccounts.domain.type.RecordType
+import com.exsample.householdaccounts.domain.factory.RecordTypeFactory
+import com.exsample.householdaccounts.domain.type.RecordTypeAgent
 
 /**
  * Created by ryosuke on 2018/02/10.
  */
 class MainService(helper: DBOpenHelper):DateSpinnerFunctions{
 
-    val recordAgent = RecordAgent(helper)
-
-    val recordFactory = RecordFactory()
+    private val recordAgent = RecordAgent(helper)
+    private val typeAgent = RecordTypeAgent(helper)
 
     fun register(moneyEdit: EditText, typeSpinner: Spinner, dateSpinner: Spinner) : ResultMessage {
 
@@ -26,10 +27,10 @@ class MainService(helper: DBOpenHelper):DateSpinnerFunctions{
             return ResultMessage(false,"ERROR","金額が入力されていません")
         }
 
-        val typeList = recordAgent.findAllEnabledTypes()
-        val selectedType = typeList.findBySelectedName(typeSpinner)
+        val typeList = typeAgent.findAllEnabledTypes()
+        val selectedType = typeList.findByName(RecordTypeFactory.create(typeSpinner))
 
-        val record = recordFactory.create(moneyEdit,selectedType,dateSpinner)
+        val record = RecordFactory.create(moneyEdit,selectedType,dateSpinner)
 
         if(recordAgent.register(record) == 1){
             return ResultMessage(true,message=buildRegisterMessage(record,selectedType))
@@ -42,7 +43,7 @@ class MainService(helper: DBOpenHelper):DateSpinnerFunctions{
                 ${targetType.name}：${target.money} 円
             """.trimIndent()
 
-    fun findRecordTypes() = recordAgent.findAllEnabledTypes()
+    fun findRecordTypes() = typeAgent.findAllEnabledTypes()
 
     fun inputNumber(numberButton:Button,moneyEdit: EditText){
         // テキストの1文字目に0が入る事を阻止する
@@ -53,9 +54,9 @@ class MainService(helper: DBOpenHelper):DateSpinnerFunctions{
     }
 
     fun update(target: Record, dateSpinner: Spinner, moneyEdit: EditText, typeSpinner: Spinner):ResultMessage{
-        val types = recordAgent.findAllEnabledTypes()
-        val selectedType = types.findBySelectedName(typeSpinner)
-        val changed = recordFactory.create(target,dateSpinner,selectedType,moneyEdit)
+        val types = typeAgent.findAllEnabledTypes()
+        val selectedType = types.findByName(RecordTypeFactory.create(typeSpinner))
+        val changed = RecordFactory.create(target,dateSpinner,selectedType,moneyEdit)
 
         if(recordAgent.update(changed) == 1){
             return ResultMessage(true,message="更新に成功しました。")

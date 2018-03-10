@@ -2,10 +2,8 @@ package com.exsample.householdaccounts.controller.widgets
 
 import android.R
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.Spinner
-import com.exsample.householdaccounts.domain.RecordType
-import com.exsample.householdaccounts.domain.RecordTypeList
+import com.exsample.householdaccounts.domain.type.RecordTypeList
 import com.exsample.householdaccounts.util.*
 import java.util.*
 
