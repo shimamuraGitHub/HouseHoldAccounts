@@ -10,7 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.exsample.householdaccounts.R
 import com.exsample.householdaccounts.controller.activity.config.ConfigActivity
-import com.exsample.householdaccounts.controller.activity.list.ListActivity
+import com.exsample.householdaccounts.controller.activity.history.HistoryActivity
 import com.exsample.householdaccounts.controller.activity.main.MainActivity
 import kotlinx.android.synthetic.main.activity_config.*
 import kotlinx.android.synthetic.main.app_bar_config.*
@@ -68,7 +68,7 @@ abstract class NavigationListener :  AppCompatActivity() , NavigationView.OnNavi
                 intent = Intent(this, ConfigActivity::class.java)
             }
             R.id.nav_list -> {
-                intent = Intent(this, ListActivity::class.java)
+                intent = Intent(this, HistoryActivity::class.java)
             }
             R.id.nav_manage -> {
 

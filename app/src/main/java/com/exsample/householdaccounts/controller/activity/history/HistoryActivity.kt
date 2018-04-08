@@ -1,4 +1,4 @@
-package com.exsample.householdaccounts.controller.activity.list
+package com.exsample.householdaccounts.controller.activity.history
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,7 @@ import com.exsample.householdaccounts.domain.record.Record
 import com.exsample.householdaccounts.domain.type.RecordTypeList
 import com.exsample.householdaccounts.util.TARGET
 
-class ListActivity : AbstractActivity(){
+class HistoryActivity : AbstractActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

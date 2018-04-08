@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include layout="@layout/app_bar_list" />
+    <include layout="@layout/app_bar_history" />
 
 
     <android.support.design.widget.FloatingActionButton

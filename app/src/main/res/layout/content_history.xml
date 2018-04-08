@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".controller.activity.list.ListActivity"
-    tools:showIn="@layout/activity_list">
+    tools:context=".controller.activity.history.HistoryActivity"
+    tools:showIn="@layout/activity_history">
 
     <ScrollView
         android:layout_width="match_parent"

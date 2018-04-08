@@ -5,7 +5,7 @@ import android.widget.CheckedTextView
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
-import com.exsample.householdaccounts.controller.activity.list.ListActivity
+import com.exsample.householdaccounts.controller.activity.history.HistoryActivity
 import com.exsample.householdaccounts.controller.message.ConfirmMessage
 import com.exsample.householdaccounts.controller.message.ItemsMessage
 import com.exsample.householdaccounts.controller.widgets.DialogBuilder
@@ -17,7 +17,7 @@ import com.exsample.householdaccounts.util.toSQLString
 /**
  * Created by ryosuke on 2018/02/12.
  */
-class HouseHoldLayout(val tableLayout: TableLayout){
+class HistoryTable(private val tableLayout: TableLayout){
 
     fun build(recordList: RecordList, typeList: RecordTypeList){
 
@@ -30,18 +30,8 @@ class HouseHoldLayout(val tableLayout: TableLayout){
         tableLayout.addView(indexRow)
 
         recordList.forEach {
-            val check = it
-
             it.recordType = typeList.findByRecord(it)
-
-            val recordRow = TableRow(tableLayout.context)
-
-            recordRow.setOnClickListener(it)
-            recordRow.addView(createRecordText(it.date!!.toSQLString()))
-            recordRow.addView(createRecordText(it.getTypeName()!!,Gravity.LEFT))
-            recordRow.addView(createRecordText(it.money.toString(),Gravity.RIGHT))
-            recordRow.addView(shouldEditCheck(it,typeList))
-            tableLayout.addView(recordRow)
+            tableLayout.addView(createRecordRow(it,typeList))
         }
     }
 
@@ -55,6 +45,17 @@ class HouseHoldLayout(val tableLayout: TableLayout){
         indexText.setPadding(20,0,20,0)
 
         return indexText
+    }
+
+    private fun createRecordRow(record: Record,typeList: RecordTypeList):TableRow{
+
+        val recordRow = TableRow(tableLayout.context)
+        recordRow.setOnClickListener(record)
+        recordRow.addView(createRecordText(record.date!!.toSQLString()))
+        recordRow.addView(createRecordText(record.getTypeName()!!,Gravity.LEFT))
+        recordRow.addView(createRecordText(record.money.toString(),Gravity.RIGHT))
+        recordRow.addView(shouldEditCheck(record,typeList))
+        return recordRow
     }
 
     private fun createRecordText(text:String,gravity:Int? = null):TextView{
@@ -88,7 +89,7 @@ class HouseHoldLayout(val tableLayout: TableLayout){
 
     private fun buildConfirmDialog(selected:Int,record: Record): DialogBuilder {
 
-        val activity = tableLayout.context as ListActivity
+        val activity = tableLayout.context as HistoryActivity
         val builder = DialogBuilder(activity)
         builder.buildConfirm(ConfirmMessage("よろしいですか？"),{ _, _->
             when (selected) {

@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import com.exsample.householdaccounts.controller.activity.list.ListActivity
+import com.exsample.householdaccounts.controller.activity.history.HistoryActivity
 import com.exsample.householdaccounts.controller.widgets.*
 import com.exsample.householdaccounts.domain.record.Record
 
@@ -36,7 +36,7 @@ class MainActivity : AbstractActivity() {
         if(result.success){
             moneyEdit.clear()
             Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
-            startActivity(Intent(this, ListActivity::class.java))
+            startActivity(Intent(this, HistoryActivity::class.java))
         }
         DialogBuilder(this).buildMessage(result).show()
     }
@@ -58,5 +58,5 @@ class MainActivity : AbstractActivity() {
      */
     fun clear(v:View) = moneyEdit.clear()
 
-    fun toList(v:View?) = startActivity(Intent(this, ListActivity::class.java))
+    fun toList(v:View?) = startActivity(Intent(this, HistoryActivity::class.java))
 }

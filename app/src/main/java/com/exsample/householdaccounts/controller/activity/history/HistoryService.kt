@@ -1,4 +1,4 @@
-package com.exsample.householdaccounts.controller.activity.list
+package com.exsample.householdaccounts.controller.activity.history
 
 import android.widget.EditText
 import android.widget.Spinner
@@ -18,7 +18,7 @@ import java.util.*
 /**
  * Created by ryosuke on 2018/02/11.
  */
-class ListService(helper: DBOpenHelper) : Year_MonthSpinnerFunctions {
+class HistoryService(helper: DBOpenHelper) : Year_MonthSpinnerFunctions {
 
     private val recordAgent = RecordAgent(helper)
     private val typeAgent = RecordTypeAgent(helper)
