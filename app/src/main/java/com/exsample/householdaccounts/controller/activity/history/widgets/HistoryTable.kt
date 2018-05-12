@@ -96,7 +96,8 @@ class HistoryTable(private val tableLayout: TableLayout){
                 0 -> activity.toMainForEdit(record)
                 1 -> activity.service.erase(record)
             }
-            activity.reBuildList()
+            removeAllViews()
+            activity.buildList(activity.service.findAllRecord())
         })
         return builder
     }

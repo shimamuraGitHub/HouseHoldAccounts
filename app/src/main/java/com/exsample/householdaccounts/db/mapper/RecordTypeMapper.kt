@@ -23,10 +23,19 @@ class RecordTypeMapper(val helper: DBOpenHelper): SQLiteExtendFun {
     val AT_STARTED = "AT_STARTED"
     val AT_ENDED = "AT_ENDED"
 
+    /**
+     * 利用可能フラグが真(1)のレコードタイプを全て取得する.
+     */
     fun findAllEnabled() = query(db=db, tableName = TABLE_NAME, selection = "ENABLED = 1")
 
+    /**
+     * テーブル内の全てのレコードを取得する.
+     */
     fun findAll() = query(db=db, tableName = TABLE_NAME)
 
+    /**
+     * コード値と利用可能フラグに紐づくレコードタイプを更新する.
+     */
     fun update(type: RecordType):Int{
 
         val values = ContentValues()
@@ -41,6 +50,10 @@ class RecordTypeMapper(val helper: DBOpenHelper): SQLiteExtendFun {
         return update(db,TABLE_NAME,values,clause,args)
     }
 
+    /**
+     * コード値が引数の設定値と紐づき、かつ利用可能フラグが真(1)の
+     * レコードタイプを利用可能フラグが偽(0)に更新する.
+     */
     fun toDisable(type: RecordType):Int{
 
         val values = ContentValues()
@@ -50,6 +63,9 @@ class RecordTypeMapper(val helper: DBOpenHelper): SQLiteExtendFun {
         return update(db,TABLE_NAME,values,"CODE = ? AND ENABLED = 1",arrayOf(type.code!!))
     }
 
+    /**
+     * レコードタイプを更新する.
+     */
     fun insert(type: RecordType):Int{
 
         val values = ContentValues()

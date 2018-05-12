@@ -11,7 +11,7 @@ import com.exsample.householdaccounts.util.toTimestamp
 /**
  * Created by ryosuke on 2018/02/05.
  */
-class RecordMapper (val helper: DBOpenHelper) : SQLiteExtendFun {
+class RecordMapper (private val helper: DBOpenHelper) : SQLiteExtendFun {
 
     val db = helper.readableDatabase
 

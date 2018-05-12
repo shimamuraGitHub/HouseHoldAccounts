@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.exsample.householdaccounts.controller.activity.main.MainActivity
 import com.exsample.householdaccounts.domain.record.Record
+import com.exsample.householdaccounts.domain.record.RecordList
 import com.exsample.householdaccounts.domain.type.RecordTypeList
 import com.exsample.householdaccounts.util.TARGET
 
@@ -14,23 +15,37 @@ class HistoryActivity : AbstractActivity(){
         setNavigation()
     }
 
-    override fun search(typeList: RecordTypeList){
+    override fun search(){
 
-        val type = typeList.findByName(service.findType(recordTypes,typeSpinner))
+        // 項目スピナーで選択した項目名を持つレコードタイプを生成
+        val type = service.findType(enabledRecordTypes,typeSpinner)
 
         val fromRecord = service.createFromRecord(fromDateSpinner,type,fromMoneyEdit)
         val toRecord = service.createToRecord(toDateSpinner,type, toMoneyEdit)
-        val result = service.search(fromRecord,toRecord)
 
         historyTable.removeAllViews()
-        historyTable.build(result, recordTypes)
+        buildList(service.search(fromRecord,toRecord))
     }
 
-    fun reBuildList(){
-        historyTable.removeAllViews()
-        historyTable.build(service.findAllRecord(), recordTypes)
+    override fun buildList(records: RecordList){
+        historyTable.build(records, recordTypes)
+        sumMoney.text = records.sumMoney().toString()
     }
 
     fun toMainForEdit(target: Record)
             = startActivity(Intent(this, MainActivity::class.java).putExtra(TARGET,target))
 }
+
+//    /**
+//     * 合計金額、履歴テーブルを再生成する.
+//     */
+//    fun buildList(){
+//        historyTable.removeAllViews()
+//
+//        val records = service.findAllRecord()
+//        historyTable.build(records, recordTypes)
+//
+//        sumMoney.text = records.sumMoney().toString()
+//
+//    }
+

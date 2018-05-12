@@ -7,8 +7,11 @@ import com.exsample.householdaccounts.util.toCode
 /**
  * Created by ryosuke on 2018/02/11.
  */
-class RecordTypeList(val list:List<RecordType>) {
+class RecordTypeList(private val list:List<RecordType>) {
 
+    /**
+     * List#mapメソッド.
+     */
     fun<T> map(func:(RecordType) -> T) = list.map(func)
 
     /**
