@@ -15,7 +15,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/registerTypeName"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -23,7 +23,7 @@
                 android:textSize="20sp" />
 
             <Switch
-                android:id="@+id/switch1"
+                android:id="@+id/registerIsExpenditure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

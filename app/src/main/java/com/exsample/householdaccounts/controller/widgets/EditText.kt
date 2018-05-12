@@ -10,7 +10,7 @@ fun EditText.text() = text.toString()
 
 fun EditText.isNullOrBlank() = text.isNullOrBlank()
 
-fun EditText.getMoney() = text.toString().toInt()
+fun EditText.getMoney() = if (!text.isNullOrBlank()) text.toString().toInt() else null
 
 fun EditText.clear() = text.clear()
 
