@@ -10,31 +10,30 @@ import com.exsample.householdaccounts.controller.activity.navigation.NavigationL
 import com.exsample.householdaccounts.controller.widgets.DateSpinnerFunctions
 import com.exsample.householdaccounts.controller.widgets.setRecordTypeAdapter
 import com.exsample.householdaccounts.db.DBOpenHelper
-import com.exsample.householdaccounts.domain.Record
-import com.exsample.householdaccounts.domain.RecordTypeList
+import com.exsample.householdaccounts.domain.record.Record
+import com.exsample.householdaccounts.domain.type.RecordTypeList
 import com.exsample.householdaccounts.util.TARGET
 import com.exsample.householdaccounts.util.toEditable
 
 /**
  * Created by ryosuke on 2018/03/03.
  */
-abstract class AbstractActivity :NavigationListener(), DateSpinnerFunctions {
+abstract class AbstractActivity : NavigationListener(), DateSpinnerFunctions {
 
-    val dbHelper = DBOpenHelper(context = this,version = 1)
-    lateinit var service: MainService
+    private val dbHelper = DBOpenHelper(this, 1)
+    val service by lazy { MainService(dbHelper) }
 
-    lateinit var dateSpinner: Spinner
-    lateinit var typeSpinner: Spinner
-    lateinit var moneyEdit: EditText
+    val dateSpinner by lazy { find<Spinner>(R.id.dates) }
+    val typeSpinner by lazy { find<Spinner>(R.id.mainTypeNames) }
+    val moneyEdit by lazy { find<EditText>(R.id.moneyEdit) }
+
+    val execute by lazy { find<Button>(R.id.execute) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         dbHelper.onCreate(dbHelper.writableDatabase)
-        service = MainService(dbHelper)
-
-        findViews()
 
         dateSpinner.setDateAdapter()
         dateSpinner.setNowPosition()
@@ -44,27 +43,17 @@ abstract class AbstractActivity :NavigationListener(), DateSpinnerFunctions {
 
         val target = intent.getSerializableExtra(TARGET)
 
-        if(target != null){
-            target as Record
-
-            setForEdit(target,recordTypes)
-
-            val button = find<Button>(R.id.execute)
-            button.text = "変更".toEditable()
-            button.setOnClickListener { v-> update(target) }
+        if (target != null) {
+            setForEdit(target as Record, recordTypes)
         }
     }
 
-    private fun findViews(){
-        dateSpinner = find<Spinner>(R.id.dates)
-        typeSpinner = find<Spinner>(R.id.typeNames)
-        moneyEdit = find<EditText>(R.id.moneyEdit)
-    }
-
-    private fun setForEdit(target:Record,recordTypes:RecordTypeList){
-        moneyEdit.text.append(target.toStringMoney())
+    private fun setForEdit(target: Record, recordTypes: RecordTypeList) {
+        moneyEdit.text.append(target.money.toString())
         typeSpinner.setSelection(recordTypes.indexOfByCode(target))
         dateSpinner.setDatePosition(target.date!!)
+        execute.text = "変更".toEditable()
+        execute.setOnClickListener {_-> update(target) }
     }
 
     abstract fun update(target: Record)

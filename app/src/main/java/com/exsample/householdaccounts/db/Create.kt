@@ -8,9 +8,15 @@ val createRecord = """
             ID VARCHAR(36) PRIMARY KEY,
             DATE DATE NOT NULL,
             TYPE_CODE VARCHAR(3) NOT NULL,
-            MONEY INTEGER NOT NULL
+            MONEY INTEGER NOT NULL,
+            CREATED_AT DATE NOT NULL,
+            UPDATED_AT DATE NOT NULL
         )
     """.trimIndent()
+
+val updateRecordColumns = """
+UPDATE RECORD SET CREATED_AT = '2018-02-20 00:00:00.0'
+"""
 
 val createType = """
         CREATE TABLE IF NOT EXISTS RECORD_TYPE(
@@ -18,8 +24,8 @@ val createType = """
             NAME VARCHAR(10) NOT NULL,
             IS_EXPENDITURE INTEGER NOT NULL,
             ENABLED INTEGER NOT NULL,
-            AT_STARTED TIMESTAMP NOT NULL,
-            AT_ENDED TIMESTAMP,
+            AT_STARTED DATE NOT NULL,
+            AT_ENDED DATE,
             PRIMARY KEY(
                 CODE, NAME, ENABLED, AT_STARTED
             )

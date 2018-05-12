@@ -1,42 +1,37 @@
 package com.exsample.householdaccounts.controller.widgets.list
 
 import android.view.Gravity
+import android.widget.CheckedTextView
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
-import com.exsample.householdaccounts.controller.activity.list.ListActivity
+import com.exsample.householdaccounts.controller.activity.history.HistoryActivity
 import com.exsample.householdaccounts.controller.message.ConfirmMessage
 import com.exsample.householdaccounts.controller.message.ItemsMessage
 import com.exsample.householdaccounts.controller.widgets.DialogBuilder
-import com.exsample.householdaccounts.domain.Record
-import com.exsample.householdaccounts.domain.RecordList
-import com.exsample.householdaccounts.domain.RecordTypeList
+import com.exsample.householdaccounts.domain.record.Record
+import com.exsample.householdaccounts.domain.record.RecordList
+import com.exsample.householdaccounts.domain.type.RecordTypeList
+import com.exsample.householdaccounts.util.toSQLString
 
 /**
  * Created by ryosuke on 2018/02/12.
  */
-class HouseHoldLayout(val tableLayout: TableLayout){
+class HistoryTable(private val tableLayout: TableLayout){
 
-    fun build(recordList:RecordList,typeList:RecordTypeList){
+    fun build(recordList: RecordList, typeList: RecordTypeList){
 
         val indexRow = TableRow(tableLayout.context)
 
         indexRow.addView(createIndexText("日付"))
         indexRow.addView(createIndexText("項目"))
         indexRow.addView(createIndexText("金額"))
+        indexRow.addView(createIndexText("旧"))
         tableLayout.addView(indexRow)
 
         recordList.forEach {
-
-            it.recordType = typeList.findByCode(it)
-
-            val recordRow = TableRow(tableLayout.context)
-
-            recordRow.setOnClickListener(it)
-            recordRow.addView(createRecordText(it.getAdjustedDate()))
-            recordRow.addView(createRecordText(it.getTypeName()!!,Gravity.LEFT))
-            recordRow.addView(createRecordText(it.toStringMoney(),Gravity.RIGHT))
-            tableLayout.addView(recordRow)
+            it.recordType = typeList.findByRecord(it)
+            tableLayout.addView(createRecordRow(it,typeList))
         }
     }
 
@@ -52,6 +47,17 @@ class HouseHoldLayout(val tableLayout: TableLayout){
         return indexText
     }
 
+    private fun createRecordRow(record: Record,typeList: RecordTypeList):TableRow{
+
+        val recordRow = TableRow(tableLayout.context)
+        recordRow.setOnClickListener(record)
+        recordRow.addView(createRecordText(record.date!!.toSQLString()))
+        recordRow.addView(createRecordText(record.getTypeName()!!,Gravity.LEFT))
+        recordRow.addView(createRecordText(record.money.toString(),Gravity.RIGHT))
+        recordRow.addView(shouldEditCheck(record,typeList))
+        return recordRow
+    }
+
     private fun createRecordText(text:String,gravity:Int? = null):TextView{
 
         val recordText = TextView(tableLayout.context)
@@ -64,12 +70,17 @@ class HouseHoldLayout(val tableLayout: TableLayout){
         return recordText
     }
 
+    private fun shouldEditCheck(record: Record, typeList: RecordTypeList):CheckedTextView{
+        val check = CheckedTextView(tableLayout.context)
+        check.text = if(record.isLatestType(typeList))"〇" else "×"
+        return check
+    }
+
     private fun TableRow.setOnClickListener(record: Record) = setOnClickListener{buildDialog(record).show()}
 
     private fun buildDialog(record: Record): DialogBuilder {
 
-
-        val title = "${record.getAdjustedDate()} ${record.getTypeName()} ${record.money}円"
+        val title = "${record.date!!.toSQLString()} ${record.getTypeName()} ${record.money}円"
         val items = arrayOf("編集", "削除")
 
         val builder = DialogBuilder(tableLayout.context)
@@ -78,14 +89,15 @@ class HouseHoldLayout(val tableLayout: TableLayout){
 
     private fun buildConfirmDialog(selected:Int,record: Record): DialogBuilder {
 
-        val activity = tableLayout.context as ListActivity
+        val activity = tableLayout.context as HistoryActivity
         val builder = DialogBuilder(activity)
         builder.buildConfirm(ConfirmMessage("よろしいですか？"),{ _, _->
             when (selected) {
                 0 -> activity.toMainForEdit(record)
                 1 -> activity.service.erase(record)
             }
-            activity.reBuildList()
+            removeAllViews()
+            activity.buildList(activity.service.findAllRecord())
         })
         return builder
     }

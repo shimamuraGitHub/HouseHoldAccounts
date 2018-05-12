@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import com.exsample.householdaccounts.controller.activity.list.ListActivity
+import com.exsample.householdaccounts.controller.activity.history.HistoryActivity
 import com.exsample.householdaccounts.controller.widgets.*
-import com.exsample.householdaccounts.domain.Record
+import com.exsample.householdaccounts.domain.record.Record
 
 class MainActivity : AbstractActivity() {
 
@@ -21,17 +21,25 @@ class MainActivity : AbstractActivity() {
      */
     fun register(v: View){
 
-        val message = service.registerRecord(moneyEdit,typeSpinner,dateSpinner)
+        val result = service.register(moneyEdit,typeSpinner,dateSpinner)
 
-        if(message.success){
+        if(result.success){
             moneyEdit.clear()
-            Toast.makeText(this, message.message, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
             return
         }
-        DialogBuilder(this).buildMessage(message).show()
+        DialogBuilder(this).buildMessage(result).show()
     }
 
-    override fun update(target: Record) {}
+    override fun update(target: Record) {
+        val result = service.update(target,dateSpinner,moneyEdit, typeSpinner)
+        if(result.success){
+            moneyEdit.clear()
+            Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
+        DialogBuilder(this).buildMessage(result).show()
+    }
 
     /**
      * 各数字ボタン押下時の処理.
@@ -50,5 +58,5 @@ class MainActivity : AbstractActivity() {
      */
     fun clear(v:View) = moneyEdit.clear()
 
-    fun toList(v:View?) = startActivityForResult(Intent(this, ListActivity::class.java),1)
+    fun toList(v:View?) = startActivity(Intent(this, HistoryActivity::class.java))
 }
